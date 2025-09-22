@@ -11,8 +11,8 @@ const montserrat = Montserrat({
 });
 
 export const metadata: Metadata = {
-  title: "DZRH Content Management System",
-  description: "DZRH Content Management System",
+  title: "Radyo Natin Content Management System",
+  description: "Radyo Natin Content Management System",
 };
 
 export default function RootLayout({
