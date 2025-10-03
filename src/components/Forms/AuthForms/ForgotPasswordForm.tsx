@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { LoaderCircle } from "lucide-react"
 import { toast } from "sonner"
+import { requestResetPassword } from "@/actions/auth"
 
 export function ForgotPasswordForm({
   className,
@@ -19,6 +20,22 @@ export function ForgotPasswordForm({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
+
+    requestResetPassword({email}).then(res => {
+      setLoading(false);
+      toast.success("Success!", {
+        style: {
+          background: "rgb(56, 142, 60)",
+          color: "white",
+          border: "none"
+        },
+        description: res.message,
+        duration: 5000,
+        position: "top-center"
+      })
+    })
+
   };
 
   return (

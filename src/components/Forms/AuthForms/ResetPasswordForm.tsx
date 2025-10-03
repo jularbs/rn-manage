@@ -25,6 +25,7 @@ import {
     FormMessage,
 } from "@/components/ui/form"
 import Link from "next/link"
+import { resetPassword } from "@/actions/auth"
 
 export function ResetPasswordForm({
     className,
@@ -67,6 +68,32 @@ export function ResetPasswordForm({
     });
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
+        setLoading(true);
+        resetPassword({data: values}).then(res => {
+            setLoading(false);
+            toast.success("Success!", {
+                style: {
+                    background: "rgb(56, 142, 60)",
+                    color: "white",
+                    border: "none"
+                },
+                description: res.message,
+                duration: 5000,
+                position: "top-center"
+            });
+        }).catch(err => {
+            setLoading(false);
+            toast.error("Invalid Request!", {
+                style: {
+                    background: "rgba(220, 46, 46, 1)",
+                    color: "white",
+                    border: "none"
+                },
+                description: err.message,
+                duration: 5000,
+                position: "top-center"
+            });
+        })
     }
 
     return (
