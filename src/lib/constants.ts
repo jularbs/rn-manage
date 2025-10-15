@@ -5,15 +5,11 @@ export const ACCEPTED_IMAGE_TYPES = [
   "image/webp",
 ];
 
-export const ADMIN_ROLE = "admin";
-export const CONTENT_MANAGER_ROLE = "content-manager";
-export const ECOMMERCE_MANAGER_ROLE = "ecommerce-manager";
-
 // User Designations
-export const ADMIN_DESIGNATION = "admin";
-export const MANAGER_DESIGNATION = "manager";
-export const DIGITAL_CONTENT_PRODUCER_DESIGNATION = "digital-content-producer";
-export const MANAGING_EDITOR_DESIGNATION = "managing-editor";
+export const ADMIN_ROLE = "admin";
+export const MANAGER_ROLE = "manager";
+export const DIGITAL_CONTENT_PRODUCER_ROLE = "digital-content-producer";
+export const MANAGING_EDITOR_ROLE = "managing-editor";
 
 // Option Keys
 export const VIDEO_STREAMING_OPTION_KEY = "VIDEO_LIVESTREAM_URL";

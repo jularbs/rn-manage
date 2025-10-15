@@ -7,10 +7,7 @@ import {
   Blocks,
   Podcast,
   ChevronRight,
-  PanelTopDashed,
-  SquareCheck,
   HouseIcon,
-  CircleUserRound,
 } from "lucide-react"
 import {
   Sidebar,
@@ -37,11 +34,11 @@ import Link from "next/link"
 import NavigationFooter from "./NavigationFooter"
 import { isAuthorized } from "@/lib/utils"
 import { useLocalStorage } from "usehooks-ts"
-import { ADMIN_DESIGNATION, DIGITAL_CONTENT_PRODUCER_DESIGNATION, MANAGER_DESIGNATION, MANAGING_EDITOR_DESIGNATION } from "@/lib/constants"
+import { ADMIN_ROLE, MANAGER_ROLE, MANAGING_EDITOR_ROLE } from "@/lib/constants"
 
 export function NavigationSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
-  const [value,] = useLocalStorage("user", { _id: "", name: "", email: "", role: "", designation: "" })
+  const [value,] = useLocalStorage("user", { _id: "", name: "", email: "", role: "" })
 
 
   return (
@@ -65,23 +62,6 @@ export function NavigationSidebar({ ...props }: React.ComponentProps<typeof Side
         <SidebarGroup>
           <SidebarGroupLabel>Dashboard</SidebarGroupLabel>
           <SidebarMenu>
-            <SidebarMenuItem>
-              <Link href="/dashboard">
-                <SidebarMenuButton tooltip="My Tasks">
-                  <CircleUserRound />
-                  <span>My Tasks</span>
-                </SidebarMenuButton>
-              </Link>
-            </SidebarMenuItem>
-            {isAuthorized(value.designation, [ADMIN_DESIGNATION, MANAGER_DESIGNATION, MANAGING_EDITOR_DESIGNATION, DIGITAL_CONTENT_PRODUCER_DESIGNATION]) && (
-              <SidebarMenuItem>
-                <Link href="/dashboard/task-management">
-                  <SidebarMenuButton tooltip="Task Management">
-                    <SquareCheck />
-                    <span>Task Management</span>
-                  </SidebarMenuButton>
-                </Link>
-              </SidebarMenuItem>)}
             <SidebarMenuItem>
               <a href={process.env.NEXT_PUBLIC_WEB_DOMAIN} target="_blank" rel="noopener noreferrer">
                 <SidebarMenuButton tooltip="Official Website">
@@ -192,14 +172,6 @@ export function NavigationSidebar({ ...props }: React.ComponentProps<typeof Side
           <SidebarGroupLabel>Site Settings</SidebarGroupLabel>
           <SidebarMenu>
             <SidebarMenuItem>
-              <Link href="/dashboard/menu-management">
-                <SidebarMenuButton tooltip="Menu Settings">
-                  <PanelTopDashed />
-                  <span>Menu Settings</span>
-                </SidebarMenuButton>
-              </Link>
-            </SidebarMenuItem>
-            <SidebarMenuItem>
               <Link href="/dashboard/streaming-management">
                 <SidebarMenuButton tooltip="Streaming Settings">
                   <Podcast />
@@ -208,7 +180,7 @@ export function NavigationSidebar({ ...props }: React.ComponentProps<typeof Side
               </Link>
             </SidebarMenuItem>
             {/* Show if admin or manager or managing editor */}
-            {isAuthorized(value.designation, [ADMIN_DESIGNATION, MANAGER_DESIGNATION, MANAGING_EDITOR_DESIGNATION]) && (
+            {isAuthorized(value.role, [ADMIN_ROLE, MANAGER_ROLE, MANAGING_EDITOR_ROLE]) && (
               <SidebarMenuItem>
                 <Link href="/dashboard/user-management">
                   <SidebarMenuButton tooltip="User Management">
