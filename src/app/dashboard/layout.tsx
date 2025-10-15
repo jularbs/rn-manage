@@ -1,6 +1,7 @@
 //TODOS: AuthWrapper to check if user is logged in
 import BreadcrumbsComponent from "@/components/Navigation/BreadcrumbsComponent"
 import { NavigationSidebar } from "@/components/Navigation/NavigationSidebar"
+import { AuthProvider } from "@/components/Providers/AuthProvider"
 import { Separator } from "@/components/ui/separator"
 import {
     SidebarInset,
@@ -12,7 +13,8 @@ export default function DashboardLayout({
 }: {
     children: React.ReactNode
 }) {
-    return <SidebarProvider>
+    return <AuthProvider>
+        <SidebarProvider>
             <NavigationSidebar />
             <SidebarInset>
                 <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
@@ -29,4 +31,6 @@ export default function DashboardLayout({
                 {children}
             </SidebarInset>
         </SidebarProvider>
+    </AuthProvider>
+
 }
