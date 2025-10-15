@@ -71,7 +71,7 @@ const UserListComponent = () => {
                         {format(new Date(item.createdAt), "PPP p")}
                     </TableCell>
                     <TableCell>
-                        {format(new Date(item.lastLogin), "PPP p")}
+                        {item.lastLogin ? format(new Date(item.lastLogin), "PPP p") : "N/A"}
                     </TableCell>
                     <TableCell className="text-right">
                         <div className="flex gap-2 justify-end">
