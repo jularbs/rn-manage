@@ -28,6 +28,7 @@ import { LoaderCircle } from "lucide-react";
 
 import { AlertError } from "@/components/AlertError";
 import { AlertSuccess } from "@/components/AlertSuccess";
+import { Register } from "@/actions/auth";
 
 export function RegistrationForm({
     className,
@@ -41,7 +42,7 @@ export function RegistrationForm({
     })
     //FORMS
     const formSchema = z.object({
-        name: z.string()
+        fullName: z.string()
             .min(2, { message: "Name must be at least 2 characters." })
             .max(50, { message: "Name must be at most 50 characters." }),
         email: z.email("This is not a valid email."),
@@ -60,7 +61,7 @@ export function RegistrationForm({
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            name: "",
+            fullName: "",
             email: "",
             password: "",
             confirmPassword: ""
@@ -68,7 +69,15 @@ export function RegistrationForm({
     });
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
-        // Do something with the form values.
+        setLoading(true)
+        try {
+            const response = await Register(values)
+            setLoading(false);
+            setMessage({ success: response.message, error: "" })
+        } catch (err: unknown) {
+            setLoading(false);
+            setMessage({ success: "", error: (err as Error).message })
+        };
     }
 
     return (
@@ -88,15 +97,15 @@ export function RegistrationForm({
                                 {message.success && <AlertSuccess title="Success!" message={message.success} />}
                                 <FormField
                                     control={form.control}
-                                    name="name"
+                                    name="fullName"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel htmlFor="name">
+                                            <FormLabel htmlFor="fullName">
                                                 <span className="text-primary">Name</span>
                                             </FormLabel>
                                             <FormControl>
                                                 <Input
-                                                    id="name"
+                                                    id="fullName"
                                                     type="text"
                                                     {...field}
                                                     placeholder="Juan Dela Cruz"

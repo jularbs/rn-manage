@@ -65,6 +65,7 @@ export function LoginForm({ }: React.ComponentProps<"div">) {
 
       //set user info to local storage
       setValue(auth.data.user);
+      setMessage({ error: "", success: auth.message })
 
       redirect("/dashboard");
     } catch (err) {
@@ -74,7 +75,7 @@ export function LoginForm({ }: React.ComponentProps<"div">) {
         throw err
       }
       //@ts-expect-error error var unknown
-      setMessage({ success: "", error: err.error })
+      setMessage({ success: "", error: err.message })
     };
   }
 
