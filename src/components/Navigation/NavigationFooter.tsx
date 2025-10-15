@@ -30,7 +30,7 @@ import { useLocalStorage } from "usehooks-ts";
 import { getInitials, unslugify } from "@/lib/utils";
 const NavigationFooter = () => {
     const { isMobile } = useSidebar()
-    const [value,] = useLocalStorage("user", { _id: "", name: "", email: "", role: "", designation: "" })
+    const [value,] = useLocalStorage("user", { _id: "", fullName: "", email: "", role: ""})
 
     return <SidebarFooter>
         <SidebarMenu>
@@ -42,11 +42,11 @@ const NavigationFooter = () => {
                             className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
                         >
                             <Avatar className="w-8 h-8 rounded-lg">
-                                <AvatarFallback className="rounded-lg">{getInitials(value.name)}</AvatarFallback>
+                                <AvatarFallback className="rounded-lg">{getInitials(value.fullName)}</AvatarFallback>
                             </Avatar>
                             <div className="grid flex-1 text-sm leading-tight text-left">
-                                <span className="font-medium truncate">{value.name}</span>
-                                <span className="text-xs truncate capitalize">{unslugify(value.designation)}</span>
+                                <span className="font-medium truncate">{value.fullName}</span>
+                                <span className="text-xs truncate capitalize">{unslugify(value.role)}</span>
                             </div>
                             <ChevronsUpDown className="ml-auto size-4" />
                         </SidebarMenuButton>
@@ -60,11 +60,11 @@ const NavigationFooter = () => {
                         <DropdownMenuLabel className="p-0 font-normal">
                             <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                                 <Avatar className="w-8 h-8 rounded-lg">
-                                    <AvatarFallback className="rounded-lg">{getInitials(value.name)}</AvatarFallback>
+                                    <AvatarFallback className="rounded-lg">{getInitials(value.fullName)}</AvatarFallback>
                                 </Avatar>
                                 <div className="grid flex-1 text-sm leading-tight text-left">
-                                    <span className="font-medium truncate">{value.name}</span>
-                                    <span className="text-xs truncate capitalize">{unslugify(value.designation)}</span>
+                                    <span className="font-medium truncate">{value.fullName}</span>
+                                    <span className="text-xs truncate capitalize">{unslugify(value.role)}</span>
                                 </div>
                             </div>
                         </DropdownMenuLabel>

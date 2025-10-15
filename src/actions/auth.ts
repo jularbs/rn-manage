@@ -26,12 +26,12 @@ export const Login = async ({ email, password }: { email: string; password: stri
 };
 
 export const Register = async ({
-  name,
+  fullName,
   email,
   password,
   confirmPassword,
 }: {
-  name: string;
+  fullName: string;
   email: string;
   password: string;
   confirmPassword: string;
@@ -43,7 +43,7 @@ export const Register = async ({
         "Content-Type": "application/json",
       },
       method: "POST",
-      body: JSON.stringify({ name, email, password, confirmPassword }),
+      body: JSON.stringify({ fullName, email, password, confirmPassword }),
     });
 
     if (!res.ok) {
@@ -82,7 +82,7 @@ export const Logout = async () => {
 
 export const validateToken = async (token: string | undefined) => {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/validate-token`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/v1/auth/validate`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
