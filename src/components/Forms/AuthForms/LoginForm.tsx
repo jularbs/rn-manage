@@ -24,6 +24,7 @@ import { redirect } from "next/navigation"
 import { isRedirectError } from "next/dist/client/components/redirect-error"
 import { AlertError } from "@/components/AlertError"
 import { useLocalStorage } from 'usehooks-ts'
+import { Login } from "@/actions/auth"
 export function LoginForm({ }: React.ComponentProps<"div">) {
 
   //Local Storage
@@ -52,29 +53,29 @@ export function LoginForm({ }: React.ComponentProps<"div">) {
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    // setLoading(true)
-    // try {
-    //   const auth = await SignIn({
-    //     ...values
-    //   })
-    //   setLoading(false);
+    setLoading(true)
+    try {
+      const auth = await Login({
+        ...values
+      })
+      setLoading(false);
 
-    //   //set cookie
-    //   setCookie('token', auth.token, { expires: 7, path: "/" })
+      //set cookie
+      setCookie('token', auth.data.token, { expires: 7, path: "/" })
 
-    //   //set user info to local storage
-    //   setValue(auth.user);
+      //set user info to local storage
+      setValue(auth.data.user);
 
-    //   redirect("/dashboard");
-    // } catch (err) {
-    //   console.log("Error: ", err)
-    //   setLoading(false);
-    //   if (isRedirectError(err)) {
-    //     throw err
-    //   }
-    //   //@ts-expect-error error var unknown
-    //   setMessage({ success: "", error: err.error })
-    // };
+      redirect("/dashboard");
+    } catch (err) {
+      console.log("Error: ", err)
+      setLoading(false);
+      if (isRedirectError(err)) {
+        throw err
+      }
+      //@ts-expect-error error var unknown
+      setMessage({ success: "", error: err.error })
+    };
   }
 
   return (
