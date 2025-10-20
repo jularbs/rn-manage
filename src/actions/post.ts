@@ -72,7 +72,7 @@ export const updatePost = async ({
   data: FormData;
 }) => {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/v1/posts`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/v1/posts/${data.get("_id")}`, {
       headers: {
         Accept: "application/json",
         Authorization: `Bearer ${token}`,
