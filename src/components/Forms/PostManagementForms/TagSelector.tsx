@@ -242,8 +242,5 @@ export default function TagSelector({ selectedTags, setSelectedTags }: {
                 </SheetFooter>
             </SheetContent>
         </Sheet>
-        <pre>
-            {JSON.stringify(tags, null, 2)}
-        </pre>
     </>
 }

@@ -101,7 +101,7 @@ export function NavigationSidebar({ ...props }: React.ComponentProps<typeof Side
                     <SidebarMenuSubItem>
                       <SidebarMenuSubButton asChild>
                         <Link href={`/dashboard/post-management/view-posts`}>
-                          <span>View Articles</span>
+                          <span>View Posts</span>
                         </Link>
                       </SidebarMenuSubButton>
                     </SidebarMenuSubItem>
