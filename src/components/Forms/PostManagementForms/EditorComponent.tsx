@@ -1,3 +1,4 @@
+//TODOS: Handle images for SEO Images
 "use client";
 import { Button } from "@/components/ui/button";
 
@@ -60,7 +61,7 @@ const EditorComponent = () => {
 
     //fetch post data if postId is present in the URL
     const { data: postData, mutate, isLoading: postLoading } = useSWR(slug ? {
-        url: `v1/post/${slug}`,
+        url: `v1/posts/${slug}`,
         token
     } : null, fetcher, {
         revalidateIfStale: false,
@@ -74,13 +75,12 @@ const EditorComponent = () => {
             setContent(data.content);
             setAuthor(data.author?._id);
             setType(data.type);
-            setPublishDate(moment(data.publishDate).format("YYYY-MM-DDTHH:mm"));
+            setPublishedAt(moment(data.publishedAt).format("YYYY-MM-DDTHH:mm"));
             setStatus(data.status);
-            setFeaturedPhotoCaption(data.photo?.caption);
-            setPreviewImage(getImageSource({ key: data.photo?.key, bucket: data.photo?.bucket }));
+            setFeaturedImageCaption(data.featuredImageCaption || "");
+            setPreviewImage(getImageSource(data.thumbnailImage));
             setSelectedCategories(data.categories?.map((c: Record<string, string>) => c._id));
             setSelectedTags(data.tags?.map((t: Record<string, string>) => t._id));
-
             setVideoSourceUrl(data.videoSourceUrl);
 
             // Update SEO data
@@ -167,10 +167,10 @@ const EditorComponent = () => {
     const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
     const [selectedTags, setSelectedTags] = useState<string[]>([]);
     const [type, setType] = useState<string>(ARTICLE_TYPE_BASIC);
-    const [featuredPhoto, setFeaturedPhoto] = useState<File | null>(null); // For Featured Photo Management
-    const [featuredPhotoCaption, setFeaturedPhotoCaption] = useState<string>(""); // For Featured Photo Management
+    const [featuredImage, setFeaturedImage] = useState<File | null>(null); // For Featured Photo Management
+    const [featuredImageCaption, setFeaturedImageCaption] = useState<string>(""); // For Featured Photo Management
     const [status, setStatus] = useState<string>("");
-    const [publishDate, setPublishDate] = useState<string>(moment().format("YYYY-MM-DDTHH:mm")); // Default to current date and time
+    const [publishedAt, setPublishedAt] = useState<string>(moment().format("YYYY-MM-DDTHH:mm")); // Default to current date and time
 
     const [previewImage, setPreviewImage] = useState<string>("");
     const [videoSourceUrl, setVideoSourceUrl] = useState<string>("");
@@ -217,7 +217,7 @@ const EditorComponent = () => {
         setSubmitLoading(true);
 
         //validate required fields
-        if (!title || !permalink || !author || !type || !publishDate) {
+        if (!title || !permalink || !author || !type || !publishedAt) {
             setSubmitLoading(false);
             toast.error("Failed to save changes", {
                 style: {
@@ -269,7 +269,7 @@ const EditorComponent = () => {
         formData.append("content", content);
         formData.append("author", author);
         formData.append("type", type);
-        formData.append("publishDate", publishDate);
+        formData.append("publishedAt", publishedAt);
         formData.append("status", status);
 
         forEach(selectedCategories, (category) => {
@@ -319,11 +319,11 @@ const EditorComponent = () => {
         if (seoData.ogImage) formData.append("ogImage", seoData.ogImage);
         if (seoData.twitterImage) formData.append("twitterImage", seoData.twitterImage);
 
-        if (featuredPhoto) {
-            formData.append("photo", featuredPhoto);
+        if (featuredImage) {
+            formData.append("featuredImage", featuredImage);
         }
-        if (featuredPhotoCaption) {
-            formData.append("caption", featuredPhotoCaption);
+        if (featuredImageCaption) {
+            formData.append("featuredImageCaption", featuredImageCaption);
         }
 
         if (type === ARTICLE_TYPE_VIDEO) {
@@ -543,9 +543,9 @@ const EditorComponent = () => {
                                     className="w-full px-3 py-2 border shadow-xs 
                                         border-input rounded-md outline-none text-sm"
                                     placeholder="Select Publish Date"
-                                    value={publishDate}
+                                    value={publishedAt}
                                     onChange={(e) => {
-                                        setPublishDate(e.target.value);
+                                        setPublishedAt(e.target.value);
                                         // Handle publish date change
                                     }}
                                 />
@@ -591,8 +591,8 @@ const EditorComponent = () => {
                                     <Button className="absolute top-2 right-2 w-5 h-5 cursor-pointer rounded-sm shadow-sm"
                                         onClick={() => {
                                             setPreviewImage("");
-                                            setFeaturedPhoto(null);
-                                            setFeaturedPhotoCaption("");
+                                            setFeaturedImage(null);
+                                            setFeaturedImageCaption("");
                                         }}
                                         size="icon">
                                         <XIcon></XIcon>
@@ -600,8 +600,8 @@ const EditorComponent = () => {
                                 </div>
                                 <Textarea
                                     placeholder="Enter photo caption here..."
-                                    value={featuredPhotoCaption}
-                                    onChange={(e) => setFeaturedPhotoCaption(e.target.value)}
+                                    value={featuredImageCaption}
+                                    onChange={(e) => setFeaturedImageCaption(e.target.value)}
                                 />
                             </>}
 
@@ -612,7 +612,7 @@ const EditorComponent = () => {
                                             accept="image/*"
                                             onChange={(e) => {
                                                 if (e.target?.files && e.target.files[0]) {
-                                                    setFeaturedPhoto(e.target.files[0]);
+                                                    setFeaturedImage(e.target.files[0]);
                                                     const reader = new FileReader();
                                                     reader.onloadend = () => {
                                                         setPreviewImage(reader.result as string);
