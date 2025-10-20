@@ -67,14 +67,14 @@ const PostListComponent = ({ preselectedTags, preselectedCategories }: { presele
         startDate: string | undefined;
         endDate: string | undefined;
         type: string | undefined;
-        postedBy: string | undefined;
+        author: string | undefined;
     }>({
         keywords: undefined,
         status: undefined,
         startDate: undefined,
         endDate: undefined,
         type: undefined,
-        postedBy: undefined,
+        author: undefined,
     });
     const [activePage, setActivePage] = useState(1);
     const { data: userData, isLoading: isUserLoading } = useSWR(filterDialogOpen ? { url: "v1/users", params: { accountVerified: true }, token } : null, fetcher)
@@ -85,7 +85,7 @@ const PostListComponent = ({ preselectedTags, preselectedCategories }: { presele
             limit, skip, searchQuery,
             ...(tags.length > 0 && { tags: tags }),
             ...(categories.length > 0 && { category: categories }),
-            postedBy: filters.postedBy ? filters.postedBy : "",
+            author: filters.author ? filters.author : "",
             status: filters.status ? filters.status : "",
             postType: filters.type ? filters.type : "",
             startDate: filters.startDate ? filters.startDate : "",
@@ -146,16 +146,16 @@ const PostListComponent = ({ preselectedTags, preselectedCategories }: { presele
 
                     </TableCell>
                     <TableCell className="text-left max-w-[400px] truncate pl-0">
-                        <Link href={`/dashboard/article-management/manage-article?slug=${item.slug}`} className="cursor-pointer">
+                        <Link href={`/dashboard/post-management/manage-post?slug=${item.slug}`} className="cursor-pointer">
                             <span className="hover:underline">{item.title}</span>
                         </Link>
                     </TableCell>
-                    <TableCell className="text-left">{item.postedBy.name}</TableCell>
+                    <TableCell className="text-left">{item.author.fullName}</TableCell>
                     <TableCell className="text-left">{item.categories[0].name}</TableCell>
-                    <TableCell className="text-left">{format(new Date(item.publishDate), "PP p")}</TableCell>
+                    <TableCell className="text-left">{item.publishedAt ? format(new Date(item.publishedAt), "PP p") : "N/A"}</TableCell>
                     <TableCell className="text-right">
                         <div className="flex gap-2 justify-end">
-                            <Link href={`/dashboard/article-management/manage-article?slug=${item.slug}`} className="cursor-pointer">
+                            <Link href={`/dashboard/post-management/manage-post?slug=${item.slug}`} className="cursor-pointer">
                                 <Edit size={15} />
                             </Link>
                             <Trash size={15} onClick={() => {
@@ -374,8 +374,8 @@ const PostListComponent = ({ preselectedTags, preselectedCategories }: { presele
                 <div className="flex flex-col gap-2">
                     <div>
                         <Label className="font-semibold text-xs mb-1">Author</Label>
-                        <Select value={filters.postedBy} onValueChange={(value) => {
-                            setFilters({ ...filters, postedBy: value });
+                        <Select value={filters.author} onValueChange={(value) => {
+                            setFilters({ ...filters, author: value });
                             setSkip(0);
                             setActivePage(1);
                         }}>
@@ -481,7 +481,7 @@ const PostListComponent = ({ preselectedTags, preselectedCategories }: { presele
                                 startDate: undefined,
                                 endDate: undefined,
                                 type: undefined,
-                                postedBy: undefined,
+                                author: undefined,
                             });
                         }}
                     >Cancel</Button>
@@ -493,9 +493,9 @@ const PostListComponent = ({ preselectedTags, preselectedCategories }: { presele
                 </div>
             </DialogContent>
         </Dialog>
-        <pre>
+        {/* <pre>
             {JSON.stringify(data, null, 2)}
-        </pre>
+        </pre> */}
     </>
 }
 
