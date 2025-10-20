@@ -16,6 +16,21 @@ export function AuthProvider({
 
     useEffect(() => {
         const token = getCookie('token');
+        if (!token) {
+            toast.error("Authentication Error!", {
+                style: {
+                    background: "rgba(220, 46, 46, 1)",
+                    color: "white",
+                    border: "none"
+                },
+                description: "Token not found. Please login again",
+                duration: 5000
+            });
+            redirect("/auth/login");
+            return;
+        }
+
+        if (authenticated) return;
         validateToken(token).then(data => {
             if (data) {
                 setAuthenticated(true)
@@ -35,8 +50,8 @@ export function AuthProvider({
             });
             redirect("/auth/login")
         })
-    }, [pathname])
+    }, [pathname, authenticated])
 
     if (authenticated)
-        return <>{children}</>
+        return children as React.JSX.Element;
 }
