@@ -7,7 +7,7 @@ export const removePost = async ({
 }) => {
   try {
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_ENDPOINT}/v2/blog/${id}`,
+      `${process.env.NEXT_PUBLIC_API_ENDPOINT}/v1/posts/${id}`,
       {
         headers: {
           Accept: "application/json",
@@ -41,7 +41,7 @@ export const createPost = async ({
   data: FormData;
 }) => {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/v2/blog`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/v1/posts`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -72,7 +72,7 @@ export const updatePost = async ({
   data: FormData;
 }) => {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/v2/blog`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/v1/posts`, {
       headers: {
         Accept: "application/json",
         Authorization: `Bearer ${token}`,
