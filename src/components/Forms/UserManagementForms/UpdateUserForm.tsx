@@ -36,7 +36,7 @@ const UpdateUserForm = ({ id = "", open, onOpenChange }:
     { id: string, open: boolean, onOpenChange: React.Dispatch<React.SetStateAction<boolean>> }) => {
     //Fetch all payment options
     const token = getCookie("token");
-    const { data, isLoading } = useSWR( 
+    const { data, isLoading } = useSWR(
         id && open ? { url: "v1/users/" + id, token } : null,
         fetcher
     );
@@ -46,7 +46,7 @@ const UpdateUserForm = ({ id = "", open, onOpenChange }:
     const formSchema = z.object({
         _id: z.string().min(1, { message: "User ID required" }),
         name: z.string().min(1, { message: "User name required" }),
-        email: z.string().min(1, { message: "Email required" }).email({ message: "Please enter a valid email" }),
+        email: z.email({ message: "Please enter a valid email" }).min(1, { message: "Email required" }),
         role: z.string().min(1, { message: "User role required" }),
     })
 
