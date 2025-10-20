@@ -1,9 +1,8 @@
-// TODOS: Check filters if applicable to API
 'use client';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Edit, Film, Images, Newspaper, Search, SlidersHorizontal, Trash, XIcon } from "lucide-react";
+import { Edit, Film, Newspaper, Search, SlidersHorizontal, Trash, XIcon } from "lucide-react";
 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import useSWR from "swr";
@@ -39,7 +38,7 @@ import {
     SelectValue,
 } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
-import { ARTICLE_TYPE_BASIC, ARTICLE_TYPE_PHOTO, ARTICLE_TYPE_VIDEO } from "@/lib/constants";
+import { ARTICLE_TYPE_BASIC, ARTICLE_TYPE_VIDEO } from "@/lib/constants";
 
 //Date Picker Components
 import { Calendar } from "@/components/ui/calendar"
@@ -49,11 +48,10 @@ import { cn } from "@/lib/utils";
 
 // import RemovePostComponent from "@/components/Forms/PostManagementForms/RemovePostComponent";
 import Link from "next/link";
-
+import RemovePostComponent from "./RemovePostComponent";
 const PostListComponent = ({ preselectedTags, preselectedCategories }: { preselectedTags?: string[], preselectedCategories?: string[] }) => {
     const token = getCookie("token");
-    const [skip, setSkip] = useState(0);
-    const [limit,] = useState(15);
+    const [limit,] = useState(10);
     const [searchQuery, setSearchQuery] = useState("");
     const [searchInput, setSearchInput] = useState("");
     const [tags, setTags] = useState<string[]>([]); //Use Slug of the tag
@@ -77,17 +75,20 @@ const PostListComponent = ({ preselectedTags, preselectedCategories }: { presele
         author: undefined,
     });
     const [activePage, setActivePage] = useState(1);
+
     const { data: userData, isLoading: isUserLoading } = useSWR(filterDialogOpen ? { url: "v1/users", params: { accountVerified: true }, token } : null, fetcher)
 
     const postSwrKey = {
         url: "v1/posts",
         params: {
-            limit, skip, searchQuery,
+            limit,
+            page: activePage,
+            search: searchQuery,
             ...(tags.length > 0 && { tags: tags }),
-            ...(categories.length > 0 && { category: categories }),
+            ...(categories.length > 0 && { categories: categories }),
             author: filters.author ? filters.author : "",
             status: filters.status ? filters.status : "",
-            postType: filters.type ? filters.type : "",
+            type: filters.type ? filters.type : "",
             startDate: filters.startDate ? filters.startDate : "",
             endDate: filters.endDate ? filters.endDate : "",
         },
@@ -98,13 +99,11 @@ const PostListComponent = ({ preselectedTags, preselectedCategories }: { presele
     useEffect(() => {
         if (preselectedTags) {
             setTags([...preselectedTags])
-            setSkip(0);
             setActivePage(1)
         }
 
         if (preselectedCategories) {
             setCategories([...preselectedCategories])
-            setSkip(0);
             setActivePage(1)
         }
 
@@ -139,9 +138,8 @@ const PostListComponent = ({ preselectedTags, preselectedCategories }: { presele
                                 variant="outline">
                                 {item.status === "published" ? "Published" : "Draft"}
                             </Badge>
-                            {item.postType === ARTICLE_TYPE_VIDEO && <Film size={12} />}
-                            {item.postType === ARTICLE_TYPE_BASIC && <Newspaper size={12} />}
-                            {item.postType === ARTICLE_TYPE_PHOTO && <Images size={12} />}
+                            {item.type === ARTICLE_TYPE_BASIC && <Newspaper size={12} />}
+                            {item.type === ARTICLE_TYPE_VIDEO && <Film size={12} />}
                         </div>
 
                     </TableCell>
@@ -175,8 +173,8 @@ const PostListComponent = ({ preselectedTags, preselectedCategories }: { presele
 
     useEffect(() => {
         if (data) {
-            if (data.count) {
-                setTotalPages(Math.ceil(data.count / limit));
+            if (data.pagination.totalPages) {
+                setTotalPages(data.pagination.totalPages);
             } else {
                 setTotalPages(0);
             }
@@ -188,7 +186,6 @@ const PostListComponent = ({ preselectedTags, preselectedCategories }: { presele
             return;
         }
         setActivePage(activePageInput);
-        setSkip((activePageInput - 1) * limit);
     }
 
     const showPagination = () => {
@@ -198,8 +195,7 @@ const PostListComponent = ({ preselectedTags, preselectedCategories }: { presele
                     <PaginationContent>
                         <PaginationItem className="cursor-pointer">
                             <PaginationPrevious onClick={() => {
-                                if (skip - limit < 0) return;
-                                setSkip(skip - limit)
+                                if (activePage - 1 < 1) return;
                                 setActivePage(activePage - 1);
                             }} />
                         </PaginationItem>
@@ -209,7 +205,6 @@ const PostListComponent = ({ preselectedTags, preselectedCategories }: { presele
                                 <PaginationLink href="#" onClick={() => {
                                     if (activePage - 1 < 1) return;
                                     setActivePage(1);
-                                    setSkip(0);
                                 }}>1</PaginationLink>
                             </PaginationItem>
                         }
@@ -238,7 +233,6 @@ const PostListComponent = ({ preselectedTags, preselectedCategories }: { presele
                                 <PaginationLink href="#" onClick={() => {
                                     if (activePage - 1 < 1) return;
                                     setActivePage(activePage - 1);
-                                    setSkip(skip - limit);
                                 }}>{activePage - 1}</PaginationLink>
                             </PaginationItem>
                         }
@@ -250,7 +244,6 @@ const PostListComponent = ({ preselectedTags, preselectedCategories }: { presele
                                 <PaginationLink href="#" onClick={() => {
                                     if (activePage + 1 > totalPages) return;
                                     setActivePage(activePage + 1);
-                                    setSkip(skip + limit);
                                 }}>{activePage + 1}</PaginationLink>
                             </PaginationItem>}
 
@@ -278,15 +271,13 @@ const PostListComponent = ({ preselectedTags, preselectedCategories }: { presele
                             <PaginationItem>
                                 <PaginationLink href="#" onClick={() => {
                                     setActivePage(totalPages);
-                                    setSkip((totalPages - 1) * limit);
                                 }}>{totalPages}</PaginationLink>
                             </PaginationItem>
                         }
 
                         <PaginationItem className="cursor-pointer">
                             <PaginationNext onClick={() => {
-                                if (skip + limit >= data?.count) return;
-                                setSkip(skip + limit)
+                                if (activePage + 1 > totalPages) return;
                                 setActivePage(activePage + 1);
                             }} />
                         </PaginationItem>
@@ -298,12 +289,11 @@ const PostListComponent = ({ preselectedTags, preselectedCategories }: { presele
 
     const handleSearch = () => {
         setSearchQuery(searchInput);
-        setSkip(0);
         setActivePage(1);
     }
 
     return <>
-        {/* <RemovePostComponent post={selectedPost} open={removePostOpen} onOpenChange={setRemovePostOpen} swrKey={postSwrKey} /> */}
+        <RemovePostComponent post={selectedPost} open={removePostOpen} onOpenChange={setRemovePostOpen} swrKey={postSwrKey} />
         <Card className="p-0 !gap-0">
             <CardContent className="p-0">
                 <form action={handleSearch}>
@@ -323,13 +313,12 @@ const PostListComponent = ({ preselectedTags, preselectedCategories }: { presele
                     </div>
                 </form>
                 <div className="px-2">
-                    <span className="text-xs">Showing {data?.count > limit && <span>{skip + 1} to {data?.count < activePage * limit ? data?.count : activePage * limit} of </span>} {data?.count} article/s</span>
+                    <span className="text-xs">{data?.pagination?.total} article/s</span>
                 </div>
                 <div className="px-2 mb-2">
                     {searchQuery && <Badge className="cursor-pointer mr-1" onClick={() => {
                         setSearchQuery("");
                         setSearchInput("");
-                        setSkip(0);
                         setActivePage(1);
                     }}>
                         {searchQuery} <XIcon />
@@ -376,7 +365,6 @@ const PostListComponent = ({ preselectedTags, preselectedCategories }: { presele
                         <Label className="font-semibold text-xs mb-1">Author</Label>
                         <Select value={filters.author} onValueChange={(value) => {
                             setFilters({ ...filters, author: value });
-                            setSkip(0);
                             setActivePage(1);
                         }}>
                             <SelectTrigger className="w-full">
@@ -395,7 +383,6 @@ const PostListComponent = ({ preselectedTags, preselectedCategories }: { presele
                             <Label className="font-semibold text-xs mb-1">Type</Label>
                             <Select value={filters.type} onValueChange={(value) => {
                                 setFilters({ ...filters, type: value });
-                                setSkip(0);
                                 setActivePage(1);
                             }}>
                                 <SelectTrigger className="w-full">
@@ -404,7 +391,6 @@ const PostListComponent = ({ preselectedTags, preselectedCategories }: { presele
                                 <SelectContent>
                                     <SelectItem value={ARTICLE_TYPE_BASIC}>Basic Article</SelectItem>
                                     <SelectItem value={ARTICLE_TYPE_VIDEO}>Video Article</SelectItem>
-                                    <SelectItem value={ARTICLE_TYPE_PHOTO}>Photo Bucket</SelectItem>
                                 </SelectContent>
                             </Select>
                         </div>
@@ -412,7 +398,6 @@ const PostListComponent = ({ preselectedTags, preselectedCategories }: { presele
                             <Label className="font-semibold text-xs mb-1">Status</Label>
                             <Select value={filters.status} onValueChange={(value) => {
                                 setFilters({ ...filters, status: value });
-                                setSkip(0);
                                 setActivePage(1);
                             }}>
                                 <SelectTrigger className="w-full">
@@ -441,7 +426,6 @@ const PostListComponent = ({ preselectedTags, preselectedCategories }: { presele
                             <PopoverContent className="w-auto p-0">
                                 <Calendar mode="single" selected={filters.startDate ? new Date(filters.startDate) : undefined} onSelect={(date) => {
                                     setFilters({ ...filters, startDate: date?.toLocaleDateString() })
-                                    setSkip(0);
                                     setActivePage(1);
                                 }} />
                             </PopoverContent>
@@ -463,7 +447,6 @@ const PostListComponent = ({ preselectedTags, preselectedCategories }: { presele
                             <PopoverContent className="w-auto p-0">
                                 <Calendar mode="single" selected={filters.endDate ? new Date(filters.endDate) : undefined} onSelect={(date) => {
                                     setFilters({ ...filters, endDate: date?.toLocaleDateString() })
-                                    setSkip(0);
                                     setActivePage(1);
                                 }} />
                             </PopoverContent>
@@ -493,9 +476,6 @@ const PostListComponent = ({ preselectedTags, preselectedCategories }: { presele
                 </div>
             </DialogContent>
         </Dialog>
-        {/* <pre>
-            {JSON.stringify(data, null, 2)}
-        </pre> */}
     </>
 }
 
