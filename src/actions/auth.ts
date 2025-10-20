@@ -20,7 +20,7 @@ export const Login = async ({ email, password }: { email: string; password: stri
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (e) {
     throw {
-      error: "Server error, please try again later",
+      message: "Server error, please try again later",
     };
   }
 };
@@ -56,7 +56,7 @@ export const Register = async ({
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (e) {
     throw {
-      error: "Server error, please try again later",
+      message: "Server error, please try again later",
     };
   }
 };
@@ -75,7 +75,7 @@ export const Logout = async () => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (err) {
     throw {
-      error: "Server error, please try again later",
+      message: "Server error, please try again later",
     };
   }
 };
@@ -90,7 +90,7 @@ export const validateToken = async (token: string | undefined) => {
 
     if (!res.ok) {
       return res.json().then((error) => {
-        console.log("VALIDATE TOKEN ERROR: ", error);
+        console.log("VALIDATE TOKEN message: ", error);
         throw error;
       });
     }
@@ -99,7 +99,7 @@ export const validateToken = async (token: string | undefined) => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (err) {
     throw {
-      error: "Server error, please try again later",
+      message: "Server error, please try again later",
     };
   }
 };
@@ -125,7 +125,7 @@ export const requestResetPassword = async ({ email }: { email: string }) => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (e) {
     throw {
-      error: "Server error, please try again later",
+      message: "Server error, please try again later",
     };
   }
 };
@@ -151,7 +151,7 @@ export const resetPassword = async ({ data }: { data: Record<string, string> }) 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (e) {
     throw {
-      error: "Server error, please try again later",
+      message: "Server error, please try again later",
     };
   }
 };
@@ -184,7 +184,7 @@ export const changePassword = async ({
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (e) {
     throw {
-      error: "Server error, please try again later",
+      message: "Server error, please try again later",
     };
   }
 };

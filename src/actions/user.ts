@@ -18,7 +18,7 @@ export const removeUser = async ({ id, token }: { id: string; token: string | un
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (e) {
     throw {
-      error: "Server error, please try again later",
+      message: "Server error, please try again later",
     };
   }
 };
@@ -51,7 +51,7 @@ export const updateUser = async ({
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (e) {
     throw {
-      error: "Server error, please try again later",
+      message: "Server error, please try again later",
     };
   }
 };
