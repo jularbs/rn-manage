@@ -85,7 +85,7 @@ export function NavigationSidebar({ ...props }: React.ComponentProps<typeof Side
                 <CollapsibleTrigger asChild>
                   <SidebarMenuButton tooltip="Article Management">
                     <Newspaper />
-                    <span>Article Management</span>
+                    <span>Post Management</span>
                     <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
                   </SidebarMenuButton>
                 </CollapsibleTrigger>
@@ -93,14 +93,14 @@ export function NavigationSidebar({ ...props }: React.ComponentProps<typeof Side
                   <SidebarMenuSub>
                     <SidebarMenuSubItem>
                       <SidebarMenuSubButton asChild>
-                        <a href={`/dashboard/article-management/create-article`}>
-                          <span>Create New Article</span>
+                        <a href={`/dashboard/post-management/create-post`}>
+                          <span>Create New Post</span>
                         </a>
                       </SidebarMenuSubButton>
                     </SidebarMenuSubItem>
                     <SidebarMenuSubItem>
                       <SidebarMenuSubButton asChild>
-                        <Link href={`/dashboard/article-management/view-articles`}>
+                        <Link href={`/dashboard/post-management/view-posts`}>
                           <span>View Articles</span>
                         </Link>
                       </SidebarMenuSubButton>
