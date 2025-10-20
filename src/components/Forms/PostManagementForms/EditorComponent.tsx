@@ -3,10 +3,11 @@ import { Button } from "@/components/ui/button";
 
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import slugify from "slugify";
 
 import { Editor } from "@tinymce/tinymce-react";
+import type { Editor as TinyMCEEditor } from "tinymce";
 import { modules } from "@/lib/tinymce";
 
 import {
@@ -39,6 +40,7 @@ import TagSelector from "./TagSelector";
 import FeaturedVideoManagement from "./FeaturedVideoManagement";
 import SEOForm from "./SEOForm";
 import Script from "next/script";
+import { forEach } from "lodash";
 
 const EditorComponent = () => {
     const searchParams = useSearchParams();
@@ -46,6 +48,8 @@ const EditorComponent = () => {
     const token = getCookie("token");
     const [user,] = useLocalStorage("user", { _id: "", name: "", email: "", role: "", designation: "" })
     const [slug, setSlug] = useState<string>("");
+    const editorRef = useRef<TinyMCEEditor | null>(null);
+    const [editorLoaded, setEditorLoaded] = useState<boolean>(false);
 
     const generateSlug = () => {
         if (title) {
@@ -219,8 +223,9 @@ const EditorComponent = () => {
                 style: {
                     background: "rgba(220, 46, 46, 1)",
                     color: "white",
-                    border: "none"
+                    border: "none",
                 },
+                position: "top-center",
                 description: "Please fill in all required fields. (title, permalink, author, type, publish date)",
                 duration: 5000
             });
@@ -266,8 +271,13 @@ const EditorComponent = () => {
         formData.append("type", type);
         formData.append("publishDate", publishDate);
         formData.append("status", status);
-        formData.append("categories", JSON.stringify(selectedCategories));
-        formData.append("tags", JSON.stringify(selectedTags));
+
+        forEach(selectedCategories, (category) => {
+            formData.append("categories", category);
+        });
+        forEach(selectedTags, (tag) => {
+            formData.append("tags", tag);
+        });
 
         formData.append("videoSourceUrl", videoSourceUrl);
 
@@ -441,11 +451,21 @@ const EditorComponent = () => {
                                 >Generate</Button>
                             </div>
                             <div>
+                                {!editorLoaded && <div className="p-10 flex flex-col items-center justify-center bg-accent">
+                                    <span className="mb-2 text-sm">Loading editor...</span>
+                                    <LoaderCircleIcon className="animate-spin h-6 w-6 text-neutral-500" />
+                                </div>}
                                 <Editor
+                                    tinymceScriptSrc={"/tinymce/tinymce.min.js"}
+                                    licenseKey="gpl"
                                     apiKey={process.env.NEXT_PUBLIC_TINY_KEY}
                                     init={modules}
                                     initialValue={postData?.content || ""}
                                     onEditorChange={e => setContent(e)}
+                                    onInit={(evt, editor) => {
+                                        editorRef.current = editor;
+                                        setEditorLoaded(true);
+                                    }}
                                 />
                             </div>
                         </div>
@@ -601,7 +621,7 @@ const EditorComponent = () => {
                                                 }
                                             }} hidden />
                                         <span className="flex gap-2 pr-1">
-                                            <ImageIcon className="size-4"/>
+                                            <ImageIcon className="size-4" />
                                             Choose Featured Photo</span>
                                     </label>
                                 </div>

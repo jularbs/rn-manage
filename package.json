@@ -27,6 +27,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
+    "fs-extra": "^11.3.2",
     "lodash": "^4.17.21",
     "lucide-react": "^0.544.0",
     "moment": "^2.30.1",
@@ -43,6 +44,7 @@
     "sonner": "^2.0.7",
     "swr": "^2.3.6",
     "tailwind-merge": "^3.3.1",
+    "tinymce": "^8.1.2",
     "typescript-cookie": "^1.0.6",
     "usehooks-ts": "^3.1.1",
     "zod": "^4.1.11"

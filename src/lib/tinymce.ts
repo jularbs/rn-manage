@@ -6,11 +6,10 @@ import { InitOptions } from "@tinymce/tinymce-react/lib/cjs/main/ts/components/E
 
 export const modules: InitOptions = {
   onboarding: false,
-  icons: "thin",
-  skin: "borderless",
   branding: false,
+  promotion: false,
   height: 800,
-  plugins: "link image code table lists advlist media autosave mediaembed wordcount searchreplace",
+  plugins: "link image code table lists advlist media autosave wordcount searchreplace",
   default_link_target: "_blank",
   image_advtab: true,
   toolbar: [
