@@ -35,17 +35,20 @@ export function getInitials(name: string): string {
   return initials.join("");
 }
 
-export function getImageSource(media: { key?: string; bucket?: string; location?: string }): string {
+export function getImageSource(media: { key?: string; bucket?: string; location?: string; url?: string }): string {
+  if (media?.url) {
+    return media.url;
+  }
+
+  if (media?.location) {
+    return media.location;
+  }
+
   if (media?.key && media?.bucket) {
     return `${process.env.NEXT_PUBLIC_API_ENDPOINT}/v1/media?key=${media.key}&bucket=${media.bucket}`;
   }
 
-  //Ride model doesnt have bucket
-  if (media?.key) {
-    return `${process.env.NEXT_PUBLIC_API_ENDPOINT}/v1/media?key=${media.key}`;
-  }
-
-  return media.location!;
+  return media?.location || "";
 }
 
 export function isAuthorized(role: string, requiredRoles: string[]): boolean {
@@ -55,3 +58,12 @@ export function isAuthorized(role: string, requiredRoles: string[]): boolean {
 
   return requiredRoles.includes(role);
 }
+
+export const ReplaceHtmlEntities = (text: string) => {
+  const translate_re = /&(nbsp|amp|quot|lt|gt);/g;
+  const translate = { nbsp: " ", amp: "&", quot: '"', lt: "<", gt: ">" };
+
+  return text.replace(translate_re, function (match, entity) {
+    return translate[entity as keyof typeof translate];
+  });
+};
