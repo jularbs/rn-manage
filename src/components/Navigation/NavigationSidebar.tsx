@@ -172,10 +172,10 @@ export function NavigationSidebar({ ...props }: React.ComponentProps<typeof Side
           <SidebarGroupLabel>Site Settings</SidebarGroupLabel>
           <SidebarMenu>
             <SidebarMenuItem>
-              <Link href="/dashboard/streaming-management">
-                <SidebarMenuButton tooltip="Streaming Settings">
+              <Link href="/dashboard/station-management">
+                <SidebarMenuButton tooltip="Station Management">
                   <Podcast />
-                  <span>Streaming Settings</span>
+                  <span>Station Management</span>
                 </SidebarMenuButton>
               </Link>
             </SidebarMenuItem>
