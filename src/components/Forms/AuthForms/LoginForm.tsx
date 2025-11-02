@@ -67,7 +67,7 @@ export function LoginForm({ }: React.ComponentProps<"div">) {
       setValue(auth.data.user);
       setMessage({ error: "", success: auth.message })
 
-      redirect("/dashboard");
+      redirect("/dashboard/post-management/view-posts");
     } catch (err) {
       console.log("Error: ", err)
       setLoading(false);
