@@ -29,6 +29,7 @@ export function unslugify(slug: string): string {
 }
 
 export function getInitials(name: string): string {
+  if(!name) return "";
   const names = name.split(" ").splice(0, 1);
   const initials = names.map((item) => item[0]);
 
