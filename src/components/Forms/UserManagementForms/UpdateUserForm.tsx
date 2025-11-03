@@ -118,7 +118,7 @@ const UpdateUserForm = ({ id = "", open, onOpenChange }:
             <DialogContent className="max-h-[100vh] overflow-y-auto">
                 <DialogHeader>
                     <DialogTitle className="flex items-center gap-1">
-                        <span>User Approval Form</span>
+                        <span>Update User Form</span>
                         {isLoading && <LoaderCircle size={18} className="animate-spin" />}
                     </DialogTitle>
                     <DialogDescription></DialogDescription>
