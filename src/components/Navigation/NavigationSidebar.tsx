@@ -8,6 +8,8 @@ import {
   Podcast,
   ChevronRight,
   HouseIcon,
+  RadioTowerIcon,
+  MicIcon,
 } from "lucide-react"
 import {
   Sidebar,
@@ -174,11 +176,43 @@ export function NavigationSidebar({ ...props }: React.ComponentProps<typeof Side
             <SidebarMenuItem>
               <Link href="/dashboard/station-management">
                 <SidebarMenuButton tooltip="Station Management">
-                  <Podcast />
+                  <RadioTowerIcon />
                   <span>Station Management</span>
                 </SidebarMenuButton>
               </Link>
             </SidebarMenuItem>
+            <Collapsible
+              asChild
+              className="group/collapsible"
+            >
+              <SidebarMenuItem>
+                <CollapsibleTrigger asChild>
+                  <SidebarMenuButton tooltip="Program Management">
+                    <MicIcon />
+                    <span>Program Management</span>
+                    <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+                  </SidebarMenuButton>
+                </CollapsibleTrigger>
+                <CollapsibleContent>
+                  <SidebarMenuSub>
+                    <SidebarMenuSubItem>
+                      <SidebarMenuSubButton asChild>
+                        <Link href={`/dashboard/program-management/manage-hosts`}>
+                          <span>Manage Hosts</span>
+                        </Link>
+                      </SidebarMenuSubButton>
+                    </SidebarMenuSubItem>
+                    <SidebarMenuSubItem>
+                      <SidebarMenuSubButton asChild>
+                        <Link href={`/dashboard/program-management/manage-programs`}>
+                          <span>Manage Programs</span>
+                        </Link>
+                      </SidebarMenuSubButton>
+                    </SidebarMenuSubItem>
+                  </SidebarMenuSub>
+                </CollapsibleContent>
+              </SidebarMenuItem>
+            </Collapsible>
             {/* Show if admin or manager or managing editor */}
             {isAuthorized(value.role, [ADMIN_ROLE, MANAGER_ROLE, MANAGING_EDITOR_ROLE]) && (
               <SidebarMenuItem>

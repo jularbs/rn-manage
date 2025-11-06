@@ -41,6 +41,13 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+
+  /* Custom Variables */
+  --spacing-program-block-size: 60px;
+
+  --color-radyonatin-blue: #1f1f99;
+  --color-radyonatin-yellow: #ffc700;
+  --color-radyonatin-red: #e41e25;
 }
 
 :root {
