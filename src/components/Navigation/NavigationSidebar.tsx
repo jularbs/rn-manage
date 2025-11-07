@@ -5,7 +5,6 @@ import {
   Newspaper,
   Tag,
   Blocks,
-  Podcast,
   ChevronRight,
   HouseIcon,
   RadioTowerIcon,
