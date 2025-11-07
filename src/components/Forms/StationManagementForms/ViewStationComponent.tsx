@@ -18,7 +18,6 @@ export default function ViewStationComponent({ selectedStationId, className }: {
     const { data, isLoading, error } = useSWR(selectedStationId ? { url: "v1/stations/id/" + selectedStationId, token: getCookie("token") } : null, fetcher); // Placeholder for SWR or data fetching logic
     const [removeOpen, setRemoveOpen] = useState(false);
     const [updateOpen, setUpdateOpen] = useState(false);
-    const [updateId, setUpdateId] = useState<string>("");
 
     if (selectedStationId === null) {
         return (
@@ -38,7 +37,7 @@ export default function ViewStationComponent({ selectedStationId, className }: {
         return (
             <>
                 <RemoveStationForm open={removeOpen} onOpenChange={setRemoveOpen} id={selectedStationId} />
-                <UpdateStationForm open={updateOpen} onOpenChange={setUpdateOpen} id={updateId} />
+                <UpdateStationForm open={updateOpen} onOpenChange={setUpdateOpen} id={selectedStationId} />
                 <div className={className}>
                     <Card>
                         <CardHeader className="flex justify-between">
@@ -53,7 +52,6 @@ export default function ViewStationComponent({ selectedStationId, className }: {
                                             <Button variant="ghost" size="sm" className="justify-start"
                                                 onClick={() => {
                                                     setUpdateOpen(true)
-                                                    setUpdateId(selectedStationId);
                                                 }}
                                             ><EditIcon /> Edit Station</Button>
                                             <Button variant="ghost" size="sm" className="justify-start text-destructive"

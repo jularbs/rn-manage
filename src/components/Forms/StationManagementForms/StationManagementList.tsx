@@ -21,7 +21,7 @@ import { PlusIcon } from "lucide-react";
 import AddStationComponent from "./AddStationComponent";
 import ViewStationComponent from "./ViewStationComponent";
 
-const CategoryManagementForm = () => {
+const StationManagementList = () => {
     const token = getCookie("token")
     const [selected, setSelected] = useState<string | null>(null);
     const { data: stations, isLoading, error } = useSWR({ url: "v1/stations", token }, fetcher)
@@ -109,4 +109,4 @@ const CategoryManagementForm = () => {
     </>
 }
 
-export default CategoryManagementForm;
+export default StationManagementList;
