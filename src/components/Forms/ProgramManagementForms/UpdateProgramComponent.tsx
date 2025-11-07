@@ -51,6 +51,7 @@ const UpdateProgramComponent = ({ open, onOpenChange, selectedProgram }: { open:
             if (data && data.data) {
                 form.reset({
                     name: data.data.name || "",
+                    slug: data.data.slug || "",
                     description: data.data.description || "",
                     startTime: data.data.startTime || "",
                     endTime: data.data.endTime || "",
@@ -65,6 +66,7 @@ const UpdateProgramComponent = ({ open, onOpenChange, selectedProgram }: { open:
 
     const formSchema = z.object({
         name: z.string().min(2, "Program name must be at least 2 characters").max(100, "Program name cannot exceed 100 characters"),
+        slug: z.string().min(1, "Slug is required").max(250, "Slug cannot exceed 250 characters"),
         description: z.string().max(500, "Description cannot exceed 500 characters").optional(),
         startTime: z.string().min(1, "Start time is required"),
         endTime: z.string().min(1, "End time is required"),
@@ -77,12 +79,20 @@ const UpdateProgramComponent = ({ open, onOpenChange, selectedProgram }: { open:
                     message: '.jpg, .jpeg, .png and .webp files are accepted.',
                 })
                 .refine(file => !file || file.size !== 0 || file.size <= 10 * 1024 * 1024, { message: "Max image size exceeded (10MB)" })
+    }).refine((data) => {
+        const startIndex = TIMES_DATA.findIndex(time => time.value === data.startTime);
+        const endIndex = TIMES_DATA.findIndex(time => time.value === data.endTime);
+        return startIndex < endIndex;
+    }, {
+        message: "End time must be after start time",
+        path: ["endTime"]
     })
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
             name: "",
+            slug: "",
             description: "",
             startTime: "",
             endTime: "",
@@ -216,6 +226,26 @@ const UpdateProgramComponent = ({ open, onOpenChange, selectedProgram }: { open:
                                             type="text"
                                             {...field}
                                             placeholder="e.g. Lunas, Sunday Buffet All The Way"
+                                        />
+                                    </FormControl>
+                                    <FormMessage className="text-xs font-light" />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="slug"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel htmlFor="slug">
+                                        <span className="text-primary">Program Slug/Permalink</span>
+                                    </FormLabel>
+                                    <FormControl>
+                                        <Input
+                                            id="slug"
+                                            type="text"
+                                            {...field}
+                                            placeholder="e.g. sunday-buffet-all-the-way"
                                         />
                                     </FormControl>
                                     <FormMessage className="text-xs font-light" />

@@ -46,10 +46,9 @@ const AddProgramComponent = ({ open, onOpenChange }: { open: boolean, onOpenChan
                 })  
                 .refine(file => !file || file.size !== 0 || file.size <= 10 * 1024 * 1024, { message: "Max image size exceeded (10MB)" })
     }).refine((data) => {
-        // const startIndex = TIMES_DATA.findIndex(time => time.value === data.startTime);
-        // const endIndex = TIMES_DATA.findIndex(time => time.value === data.endTime);
-        // return startIndex < endIndex;
-        return data.startTime < data.endTime;
+        const startIndex = TIMES_DATA.findIndex(time => time.value === data.startTime);
+        const endIndex = TIMES_DATA.findIndex(time => time.value === data.endTime);
+        return startIndex < endIndex;
     }, {
         message: "End time must be after start time",
         path: ["endTime"]
