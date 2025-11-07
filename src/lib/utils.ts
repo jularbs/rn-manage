@@ -29,7 +29,7 @@ export function unslugify(slug: string): string {
 }
 
 export function getInitials(name: string): string {
-  if(!name) return "";
+  if (!name) return "";
   const names = name.split(" ").splice(0, 1);
   const initials = names.map((item) => item[0]);
 
@@ -68,3 +68,19 @@ export const ReplaceHtmlEntities = (text: string) => {
     return translate[entity as keyof typeof translate];
   });
 };
+
+export function removeDuplicatesByField<T extends Record<string, unknown>>(
+  arr: T[],
+  field: keyof T
+): T[] {
+  const seen = new Set<unknown>();
+  return arr.filter((item) => {
+    const fieldValue = item[field];
+    if (seen.has(fieldValue)) {
+      return false;
+    }
+    seen.add(fieldValue);
+    return true;
+  });
+}
+

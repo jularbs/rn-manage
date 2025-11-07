@@ -10,6 +10,7 @@ import {
   HouseIcon,
   RadioTowerIcon,
   MicIcon,
+  FileUser,
 } from "lucide-react"
 import {
   Sidebar,
@@ -181,38 +182,22 @@ export function NavigationSidebar({ ...props }: React.ComponentProps<typeof Side
                 </SidebarMenuButton>
               </Link>
             </SidebarMenuItem>
-            <Collapsible
-              asChild
-              className="group/collapsible"
-            >
-              <SidebarMenuItem>
-                <CollapsibleTrigger asChild>
-                  <SidebarMenuButton tooltip="Program Management">
-                    <MicIcon />
-                    <span>Program Management</span>
-                    <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
-                  </SidebarMenuButton>
-                </CollapsibleTrigger>
-                <CollapsibleContent>
-                  <SidebarMenuSub>
-                    <SidebarMenuSubItem>
-                      <SidebarMenuSubButton asChild>
-                        <Link href={`/dashboard/program-management/manage-hosts`}>
-                          <span>Manage Hosts</span>
-                        </Link>
-                      </SidebarMenuSubButton>
-                    </SidebarMenuSubItem>
-                    <SidebarMenuSubItem>
-                      <SidebarMenuSubButton asChild>
-                        <Link href={`/dashboard/program-management/manage-programs`}>
-                          <span>Manage Programs</span>
-                        </Link>
-                      </SidebarMenuSubButton>
-                    </SidebarMenuSubItem>
-                  </SidebarMenuSub>
-                </CollapsibleContent>
-              </SidebarMenuItem>
-            </Collapsible>
+            <SidebarMenuItem>
+              <Link href="/dashboard/jock-management">
+                <SidebarMenuButton tooltip="Jock Management">
+                  <FileUser />
+                  <span>Jock Management</span>
+                </SidebarMenuButton>
+              </Link>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+              <Link href="/dashboard/program-management">
+                <SidebarMenuButton tooltip="Program Management">
+                  <MicIcon />
+                  <span>Program Management</span>
+                </SidebarMenuButton>
+              </Link>
+            </SidebarMenuItem>
             {/* Show if admin or manager or managing editor */}
             {isAuthorized(value.role, [ADMIN_ROLE, MANAGER_ROLE, MANAGING_EDITOR_ROLE]) && (
               <SidebarMenuItem>
