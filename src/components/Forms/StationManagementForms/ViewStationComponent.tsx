@@ -11,7 +11,6 @@ import { getCookie } from "typescript-cookie";
 import RemoveStationForm from "./RemoveStationForm";
 import { useState } from "react";
 import UpdateStationForm from "./UpdateStationForm";
-import { update } from "lodash";
 
 export default function ViewStationComponent({ selectedStationId, className }: { selectedStationId: string, className?: string }) {
 

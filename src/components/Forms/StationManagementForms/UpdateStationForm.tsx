@@ -1,7 +1,7 @@
 //TODOS: validation a bit clinky, do tests regarding email and urls
 //TODOS: Optional Fields not working properly
 //TODOS: fetching clunky, try to do fetching when open
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { getCookie } from "typescript-cookie"
 
 import { z } from "zod"
