@@ -26,6 +26,7 @@ const UpdateJockComponent = ({ open, onOpenChange, selected }:
     const [loading, setLoading] = useState(false);
     const [previewImage, setPreviewImage] = useState("");
     const [cacheToken, setCacheToken] = useState("");
+    const [initialStation, setInitialStation] = useState("");
 
     const { isLoading } = useSWR(selected && open ? { url: "v1/jocks/id/" + selected, token, cacheToken } : null, fetcher, {
         revalidateIfStale: false,
@@ -45,8 +46,11 @@ const UpdateJockComponent = ({ open, onOpenChange, selected }:
                 form.setValue("tiktok", data.data.socialLinks.tiktok);
                 form.setValue("youtube", data.data.socialLinks.youtube);
                 if (data.data.image) {
-                    setPreviewImage(getImageSource(data.data.logoImage))
+                    setPreviewImage(getImageSource(data.data.image))
                 }
+                //Set state original station to trigger mutate on submit
+                if (data.data.station && data.data.station._id)
+                    setInitialStation(data.data.station._id);
             }
         }
     });
@@ -139,7 +143,7 @@ const UpdateJockComponent = ({ open, onOpenChange, selected }:
             mutate({
                 url: "v1/jocks",
                 params: {
-                    station: stationId
+                    station: initialStation
                 },
                 token
             })
@@ -190,6 +194,13 @@ const UpdateJockComponent = ({ open, onOpenChange, selected }:
             setCacheToken("");
         }
     }, [open, form]);
+
+    //Clear programs when station changes
+    useEffect(() => {
+        if (stationId !== initialStation) {
+            form.setValue("programs", []);
+        }
+    }, [stationId, initialStation, form]);
 
     return <>
         <Dialog open={open} onOpenChange={onOpenChange}>
