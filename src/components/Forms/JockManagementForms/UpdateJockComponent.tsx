@@ -83,7 +83,6 @@ const UpdateJockComponent = ({ open, onOpenChange, selected }:
                     message: '.jpg, .jpeg, .png and .webp files are accepted.',
                 })
                 .refine(file => !file || file.size !== 0 || file.size <= 10 * 1024 * 1024, { message: "Max image size exceeded (10MB)" })
-
     })
 
     const form = useForm<z.infer<typeof formSchema>>({
@@ -96,6 +95,7 @@ const UpdateJockComponent = ({ open, onOpenChange, selected }:
             twitter: "",
             instagram: "",
             tiktok: "",
+            youtube: "",
             station: "",
             programs: [],
             image: undefined,
@@ -186,6 +186,7 @@ const UpdateJockComponent = ({ open, onOpenChange, selected }:
                 twitter: "",
                 instagram: "",
                 tiktok: "",
+                youtube: "",
                 station: "",
                 programs: [],
                 image: undefined,
