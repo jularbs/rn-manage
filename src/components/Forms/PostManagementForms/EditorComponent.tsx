@@ -315,11 +315,11 @@ const EditorComponent = () => {
         if (seoData.metaImageAlt) formData.append("metaImageAlt", seoData.metaImageAlt);
 
         // SEO Images
-        if (seoData.metaImage) formData.append("metaImage", seoData.metaImage);
-        if (seoData.ogImage) formData.append("ogImage", seoData.ogImage);
-        if (seoData.twitterImage) formData.append("twitterImage", seoData.twitterImage);
+        if (seoData.metaImage instanceof File) formData.append("metaImage", seoData.metaImage);
+        if (seoData.ogImage instanceof File) formData.append("ogImage", seoData.ogImage);
+        if (seoData.twitterImage instanceof File) formData.append("twitterImage", seoData.twitterImage);
 
-        if (featuredImage) {
+        if (featuredImage instanceof File) {
             formData.append("featuredImage", featuredImage);
         }
         if (featuredImageCaption) {

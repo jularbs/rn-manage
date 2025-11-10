@@ -134,7 +134,9 @@ const SEOForm = ({ seoData, setSeoData, postTitle, postContent, postSlug }: SEOF
 
         // Update all data at once
         setSeoData(updatedData);
-    }; const handleImageUpload = (field: 'metaImage' | 'ogImage' | 'twitterImage', file: File | null) => {
+    }; 
+    
+    const handleImageUpload = (field: 'metaImage' | 'ogImage' | 'twitterImage', file: File | null) => {
         updateSeoData(field, file);
 
         if (file) {
