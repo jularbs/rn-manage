@@ -6,6 +6,10 @@ module.exports = {
         instances: "max",
         exec_mode: "cluster",
         
+        env: {
+            NODE_ENV: "production",
+            PORT: 3030, // Change this to the port you want to use
+        },
         // Process management
         autorestart: true,
         watch: false,
