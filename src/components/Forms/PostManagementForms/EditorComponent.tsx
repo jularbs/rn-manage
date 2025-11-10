@@ -458,7 +458,6 @@ const EditorComponent = () => {
                                 <Editor
                                     tinymceScriptSrc={"/tinymce/tinymce.min.js"}
                                     licenseKey="gpl"
-                                    apiKey={process.env.NEXT_PUBLIC_TINY_KEY}
                                     init={modules}
                                     initialValue={postData?.content || ""}
                                     onEditorChange={e => setContent(e)}
