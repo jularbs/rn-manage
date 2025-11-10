@@ -435,7 +435,7 @@ const EditorComponent = () => {
                                 <Button variant={"outline"}
                                     // disabled
                                     size={"sm"}
-                                    className=" text-neutral-800 rounded-br-none rounded-tr-none text-[12px] pl-2 pr-0 border-r-0">{process.env.NEXT_PUBLIC_WEBSITE_URL}/post/</Button>
+                                    className=" text-neutral-800 rounded-br-none rounded-tr-none text-[12px] pl-2 pr-0 border-r-0">{process.env.NEXT_PUBLIC_WEB_DOMAIN}/post/</Button>
                                 <Input className="rounded-none h-[32px] px-0 border-l-0 !text-[12px]"
                                     value={permalink}
                                     placeholder="enter-permalink-here"
