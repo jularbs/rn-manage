@@ -4,17 +4,20 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { getImageSource } from "@/lib/utils";
-import { AtSignIcon, EditIcon, EllipsisVerticalIcon, LoaderCircle, MapIcon, PhoneIcon, PodcastIcon, TrashIcon, VideoIcon } from "lucide-react";
+import { AtSignIcon, EditIcon, EllipsisVerticalIcon, LoaderCircle, LoaderCircleIcon, MapIcon, PhoneIcon, PodcastIcon, SettingsIcon, TrashIcon, VideoIcon } from "lucide-react";
 import Image from "next/image";
-import useSWR from "swr";
+import useSWR, { mutate } from "swr";
 import { getCookie } from "typescript-cookie";
 import RemoveStationForm from "./RemoveStationForm";
 import { useState } from "react";
 import UpdateStationForm from "./UpdateStationForm";
+import { setDefaultStation } from "@/actions/station";
 
 export default function ViewStationComponent({ selectedStationId, className }: { selectedStationId: string, className?: string }) {
 
-    const { data, isLoading, error } = useSWR(selectedStationId ? { url: "v1/stations/id/" + selectedStationId, token: getCookie("token") } : null, fetcher); // Placeholder for SWR or data fetching logic
+    const token = getCookie("token");
+    const [defaultLoading, setDefaultLoading] = useState(false);
+    const { data, isLoading, error } = useSWR(selectedStationId ? { url: "v1/stations/id/" + selectedStationId, token } : null, fetcher); // Placeholder for SWR or data fetching logic
     const [removeOpen, setRemoveOpen] = useState(false);
     const [updateOpen, setUpdateOpen] = useState(false);
 
@@ -30,6 +33,20 @@ export default function ViewStationComponent({ selectedStationId, className }: {
 
             </>
         );
+    }
+
+    const setSelectedStationDefault = () => {
+        // Placeholder for setting station as default
+        console.log("Set station as default");
+        setDefaultLoading(true);
+        setDefaultStation({ token, id: selectedStationId }).then(() => {
+            setDefaultLoading(false);
+            mutate({ url: "v1/stations", token }); // Refresh stations list
+            console.log("Station set as default");
+        }).catch((error) => {
+            setDefaultLoading(false);
+            console.error("Error setting station as default:", error);
+        });
     }
 
     if (selectedStationId) {
@@ -48,6 +65,13 @@ export default function ViewStationComponent({ selectedStationId, className }: {
                                     </PopoverTrigger>
                                     <PopoverContent className="p-2 -translate-x-10">
                                         <div className="grid gap-2">
+                                            <Button variant="ghost" size="sm" className="justify-start"
+                                                onClick={() => {
+                                                    setSelectedStationDefault()
+                                                }}
+                                            ><SettingsIcon /> Set as Default
+                                            <LoaderCircleIcon className={`w-4 ${defaultLoading ? "inline-block animate-spin" : "hidden"}`} />
+                                            </Button>
                                             <Button variant="ghost" size="sm" className="justify-start"
                                                 onClick={() => {
                                                     setUpdateOpen(true)

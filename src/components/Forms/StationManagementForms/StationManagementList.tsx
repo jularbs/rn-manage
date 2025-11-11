@@ -20,6 +20,7 @@ import { Button } from "@/components/ui/button";
 import { PlusIcon } from "lucide-react";
 import AddStationComponent from "./AddStationComponent";
 import ViewStationComponent from "./ViewStationComponent";
+import { Badge } from "@/components/ui/badge";
 
 const StationManagementList = () => {
     const token = getCookie("token")
@@ -65,10 +66,11 @@ const StationManagementList = () => {
                 }
                 setSelected(item._id);
             }}>
-                <TableCell className={cn(`cursor-pointer`,
+                <TableCell className={cn(`cursor-pointer flex justify-between`,
                     selected === item._id ? "bg-blue-500 text-white" : "hover:bg-neutral-200"
                 )}>
                     {item.name}
+                    {item.default ? <Badge variant={"secondary"}>default</Badge> : null}
                 </TableCell>
             </TableRow>
         })
