@@ -127,3 +127,15 @@
     @apply bg-background text-foreground;
   }
 }
+
+.iframe-container {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+
+  iframe {
+    width: 100% !important;
+    height: 100% !important;
+    border: none;
+  }
+}

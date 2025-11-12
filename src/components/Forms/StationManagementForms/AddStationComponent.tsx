@@ -33,6 +33,16 @@ export default function AddStationComponent({ open, onOpenChange }:
         contactNumber: z.string().optional(),
         email: z.union([z.email({ message: "Invalid email address" }),
         z.string().length(0)]),
+        facebook: z.union([z.url({ message: "Invalid URL" }),
+        z.string().length(0)]),
+        twitter: z.union([z.url({ message: "Invalid URL" }),
+        z.string().length(0)]),
+        instagram: z.union([z.url({ message: "Invalid URL" }),
+        z.string().length(0)]),
+        tiktok: z.union([z.url({ message: "Invalid URL" }),
+        z.string().length(0)]),
+        youtube: z.union([z.url({ message: "Invalid URL" }),
+        z.string().length(0)]),
         mapEmbedCode: z.string().optional(),
         audioStreamURL: z.union([z.url({ message: "Invalid URL" }),
         z.string().length(0)]),
@@ -56,6 +66,11 @@ export default function AddStationComponent({ open, onOpenChange }:
             locationGroup: "",
             contactNumber: "",
             email: "",
+            facebook: "",
+            twitter: "",
+            instagram: "",
+            tiktok: "",
+            youtube: "",
             mapEmbedCode: "",
             audioStreamURL: "",
             videoStreamURL: "",
@@ -198,7 +213,104 @@ export default function AddStationComponent({ open, onOpenChange }:
                                     </FormItem>
                                 )}
                             />
-
+                            <label htmlFor="contact information"
+                                className="font-bold uppercase text-gray-700 text-lg my-1"
+                            >Social Media Links</label>
+                            <FormField
+                                control={form.control}
+                                name="facebook"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel htmlFor="name">
+                                            <span className="text-primary">Facebook URL</span>
+                                        </FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                id="facebook"
+                                                type="text"
+                                                {...field}
+                                            />
+                                        </FormControl>
+                                        <FormMessage className="text-xs font-light" />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="twitter"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel htmlFor="name">
+                                            <span className="text-primary">Twitter X URL</span>
+                                        </FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                id="twitter"
+                                                type="text"
+                                                {...field}
+                                            />
+                                        </FormControl>
+                                        <FormMessage className="text-xs font-light" />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="instagram"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel htmlFor="name">
+                                            <span className="text-primary">Instagram URL</span>
+                                        </FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                id="instagram"
+                                                type="text"
+                                                {...field}
+                                            />
+                                        </FormControl>
+                                        <FormMessage className="text-xs font-light" />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="tiktok"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel htmlFor="tiktok">
+                                            <span className="text-primary">Tiktok URL</span>
+                                        </FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                id="tiktok"
+                                                type="text"
+                                                {...field}
+                                            />
+                                        </FormControl>
+                                        <FormMessage className="text-xs font-light" />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="youtube"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel htmlFor="tiktok">
+                                            <span className="text-primary">Youtube URL</span>
+                                        </FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                id="youtube"
+                                                type="text"
+                                                {...field}
+                                            />
+                                        </FormControl>
+                                        <FormMessage className="text-xs font-light" />
+                                    </FormItem>
+                                )}
+                            />
                             <label htmlFor="contact information"
                                 className="font-bold uppercase text-gray-700 text-lg my-1"
                             >Contact Information</label>
@@ -248,7 +360,7 @@ export default function AddStationComponent({ open, onOpenChange }:
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel htmlFor="mapEmpedCode">
-                                            <span className="text-primary">Google Maps Embed Code</span><span className="font-light text-xs">(100% width x 100% height)</span>
+                                            <span className="text-primary">Google Maps Embed Code</span>
                                         </FormLabel>
                                         <FormControl>
                                             <Textarea

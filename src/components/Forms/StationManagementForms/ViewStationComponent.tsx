@@ -12,6 +12,8 @@ import RemoveStationForm from "./RemoveStationForm";
 import { useState } from "react";
 import UpdateStationForm from "./UpdateStationForm";
 import { setDefaultStation } from "@/actions/station";
+import { FaFacebook } from "react-icons/fa";
+import { FaInstagram, FaTiktok, FaXTwitter, FaYoutube } from "react-icons/fa6";
 
 export default function ViewStationComponent({ selectedStationId, className }: { selectedStationId: string, className?: string }) {
 
@@ -70,7 +72,7 @@ export default function ViewStationComponent({ selectedStationId, className }: {
                                                     setSelectedStationDefault()
                                                 }}
                                             ><SettingsIcon /> Set as Default
-                                            <LoaderCircleIcon className={`w-4 ${defaultLoading ? "inline-block animate-spin" : "hidden"}`} />
+                                                <LoaderCircleIcon className={`w-4 ${defaultLoading ? "inline-block animate-spin" : "hidden"}`} />
                                             </Button>
                                             <Button variant="ghost" size="sm" className="justify-start"
                                                 onClick={() => {
@@ -125,30 +127,65 @@ export default function ViewStationComponent({ selectedStationId, className }: {
                                             </label>
                                             <p id="emailAddress" className="text-sm">{data.data.email ? data.data.email : "N/A"}</p>
                                         </div>
-                                        <div className="mt-4">
-                                            <label htmlFor="audioStreamURL" className="flex gap-2 items-center">
-                                                <PodcastIcon className="w-4" />
-                                                <span className="text-sm font-bold">Audio Stream URL</span>
-                                            </label>
-                                            <p id="audioStreamURL" className="text-sm">{data.data.audioStreamURL ? data.data.audioStreamURL : "N/A"}</p>
-                                        </div>
-                                        <div className="mt-4">
-                                            <label htmlFor="videoStreamURL" className="flex gap-2 items-center">
-                                                <VideoIcon className="w-4" />
-                                                <span className="text-sm font-bold">Video Stream URL</span>
-                                            </label>
-                                            <p id="videoStreamURL" className="text-sm">{data.data.videoStreamURL ? data.data.videoStreamURL : "N/A"}</p>
-                                        </div>
                                     </div>
                                     {/* Add more fields as necessary */}
                                     <div>
-                                        <div className="relative w-full min-h-[300px] aspect-3/2 bg-neutral-200 justify-center items-center flex rounded-sm overflow-hidden">
+                                        <div className="iframe-container w-full aspect-3/2 bg-neutral-200 justify-center items-center flex rounded-sm overflow-hidden">
                                             <MapIcon className="mr-2" />
                                             <span className="text-sm">No Google Maps Embed available</span>
                                             {data.data.mapEmbedCode &&
                                                 <div className="absolute inset-0" dangerouslySetInnerHTML={{ __html: data.data.mapEmbedCode }}></div>
                                             }
                                         </div>
+                                    </div>
+                                    <div className="mt-4">
+                                        <label htmlFor="audioStreamURL" className="flex gap-2 items-center">
+                                            <PodcastIcon className="w-4" />
+                                            <span className="text-sm font-bold">Audio Stream URL</span>
+                                        </label>
+                                        <p id="audioStreamURL" className="text-sm">{data.data.audioStreamURL ? data.data.audioStreamURL : "N/A"}</p>
+                                    </div>
+                                    <div className="mt-4">
+                                        <label htmlFor="videoStreamURL" className="flex gap-2 items-center">
+                                            <VideoIcon className="w-4" />
+                                            <span className="text-sm font-bold">Video Stream URL</span>
+                                        </label>
+                                        <p id="videoStreamURL" className="text-sm">{data.data.videoStreamURL ? data.data.videoStreamURL : "N/A"}</p>
+                                    </div>
+                                    <div className="mt-4">
+                                        <label htmlFor="facebook" className="flex gap-2 items-center">
+                                            <FaFacebook className="w-4" />
+                                            <span className="text-sm font-bold">Facebook URL</span>
+                                        </label>
+                                        <p id="facebook" className="text-sm">{data.data.socialLinks?.facebook ? data.data.socialLinks.facebook : "N/A"}</p>
+                                    </div>
+                                    <div className="mt-4">
+                                        <label htmlFor="twitter" className="flex gap-2 items-center">
+                                            <FaXTwitter className="w-4" />
+                                            <span className="text-sm font-bold">Twitter X URL</span>
+                                        </label>
+                                        <p id="twitter" className="text-sm">{data.data.socialLinks?.twitter ? data.data.socialLinks.twitter : "N/A"}</p>
+                                    </div>
+                                    <div className="mt-4">
+                                        <label htmlFor="tiktok" className="flex gap-2 items-center">
+                                            <FaTiktok className="w-4" />
+                                            <span className="text-sm font-bold">Tiktok X URL</span>
+                                        </label>
+                                        <p id="tiktok" className="text-sm">{data.data.socialLinks?.tiktok ? data.data.socialLinks.tiktok : "N/A"}</p>
+                                    </div>
+                                    <div className="mt-4">
+                                        <label htmlFor="instagram" className="flex gap-2 items-center">
+                                            <FaInstagram className="w-4" />
+                                            <span className="text-sm font-bold">Instagram URL</span>
+                                        </label>
+                                        <p id="instagram" className="text-sm">{data.data.socialLinks?.instagram ? data.data.socialLinks.instagram : "N/A"}</p>
+                                    </div>
+                                    <div className="mt-4">
+                                        <label htmlFor="twitter" className="flex gap-2 items-center">
+                                            <FaYoutube className="w-4" />
+                                            <span className="text-sm font-bold">Youtube URL</span>
+                                        </label>
+                                        <p id="youtube" className="text-sm">{data.data.socialLinks?.youtube ? data.data.socialLinks.youtube : "N/A"}</p>
                                     </div>
                                 </div>
                             )}
