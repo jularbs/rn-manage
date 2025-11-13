@@ -111,7 +111,7 @@ export default function ViewStationComponent({ selectedStationId, className }: {
                                             )}
                                         </div>
                                         <p className="uppercase text-sm leading-3 font-extrabold text-neutral-400">{data.data.locationGroup} station</p>
-                                        <h2 className="text-xl font-bold mb-2">{data.data.frequency} {data.data.name}</h2>
+                                        <h2 className="text-xl font-bold mb-2">{data.data.name} {data.data.frequency}</h2>
                                         <p className="text-sm">{data.data.address}</p>
                                         <div className="mt-4">
                                             <label htmlFor="contactNumber" className="flex gap-2 items-center">

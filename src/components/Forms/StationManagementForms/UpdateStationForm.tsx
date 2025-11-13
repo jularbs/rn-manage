@@ -62,7 +62,7 @@ export default function UpdateStationForm({ id = "", open, onOpenChange }:
 
     const formSchema = z.object({
         name: z.string().min(1, { message: "Station name required" }),
-        frequency: z.string().min(1, { message: "Frequency required" }),
+        frequency: z.string().optional(),
         address: z.string().optional(),
         locationGroup: z.string().min(1, { message: "Location required" }),
         contactNumber: z.string().optional(),
