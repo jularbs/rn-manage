@@ -266,7 +266,7 @@ const AddProgramComponent = ({ open, onOpenChange }: { open: boolean, onOpenChan
                                             <SelectTrigger className={cn("w-full",
                                                 form.formState.errors.startTime && "border-destructive"
                                             )}>
-                                                <SelectValue placeholder="Select Start Time" />
+                                                <SelectValue placeholder="Select End Time" />
                                             </SelectTrigger>
                                             <SelectContent>
                                                 {TIMES_DATA.map((time) => (
