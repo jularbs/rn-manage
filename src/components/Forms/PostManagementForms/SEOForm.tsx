@@ -97,7 +97,7 @@ const SEOForm = ({ seoData, setSeoData, postTitle, postContent, postSlug }: SEOF
 
         // Auto-generate meta title
         if (postTitle) {
-            updatedData.metaTitle = postTitle;
+            updatedData.metaTitle = postTitle.trim();
         }
 
         // Auto-generate meta description from content
@@ -105,7 +105,7 @@ const SEOForm = ({ seoData, setSeoData, postTitle, postContent, postSlug }: SEOF
             const plainText = ReplaceHtmlEntities(postContent.replace(/<[^>]*>/g, ''));
 
             const description = plainText.substring(0, 160) + (plainText.length > 160 ? '...' : '');
-            updatedData.metaDescription = description;
+            updatedData.metaDescription = description.trim();
         }
 
         // Auto-generate canonical URL
@@ -134,8 +134,8 @@ const SEOForm = ({ seoData, setSeoData, postTitle, postContent, postSlug }: SEOF
 
         // Update all data at once
         setSeoData(updatedData);
-    }; 
-    
+    };
+
     const handleImageUpload = (field: 'metaImage' | 'ogImage' | 'twitterImage', file: File | null) => {
         updateSeoData(field, file);
 
