@@ -68,55 +68,6 @@ const EditorComponent = () => {
         revalidateOnFocus: false,
         revalidateOnReconnect: false,
         keepPreviousData: true,
-        onSuccess: (data) => {
-            //update local states
-            setTitle(data.title);
-            setPermalink(data.slug);
-            setContent(data.content);
-            setAuthor(data.author?._id);
-            setType(data.type);
-            setPublishedAt(moment(data.publishedAt).format("YYYY-MM-DDTHH:mm"));
-            setStatus(data.status);
-            setFeaturedImageCaption(data.featuredImageCaption || "");
-            setPreviewImage(getImageSource(data.thumbnailImage));
-            setSelectedCategories(data.categories?.map((c: Record<string, string>) => c._id));
-            setSelectedTags(data.tags?.map((t: Record<string, string>) => t._id));
-            setVideoSourceUrl(data.videoSourceUrl);
-
-            // Update SEO data
-            setSeoData({
-                metaTitle: data.metaTitle || "",
-                metaDescription: data.metaDescription || "",
-                keywords: data.keywords || "",
-                canonicalUrl: data.canonicalUrl || "",
-                robotsIndex: data.robotsIndex !== undefined ? data.robotsIndex : true,
-                robotsFollow: data.robotsFollow !== undefined ? data.robotsFollow : true,
-                robotsArchive: data.robotsArchive !== undefined ? data.robotsArchive : true,
-                robotsSnippet: data.robotsSnippet !== undefined ? data.robotsSnippet : true,
-                robotsImageIndex: data.robotsImageIndex !== undefined ? data.robotsImageIndex : true,
-                ogTitle: data.ogTitle || "",
-                ogDescription: data.ogDescription || "",
-                ogType: data.ogType || "article",
-                ogUrl: data.ogUrl || "",
-                ogSiteName: data.ogSiteName || "",
-                ogLocale: data.ogLocale || "en_US",
-                twitterCard: data.twitterCard || "summary_large_image",
-                twitterTitle: data.twitterTitle || "",
-                twitterDescription: data.twitterDescription || "",
-                twitterSite: data.twitterSite || "",
-                twitterCreator: data.twitterCreator || "",
-                author: data.seoAuthor || "",
-                publisher: data.publisher || "",
-                focusKeyword: data.focusKeyword || "",
-                readingTime: data.readingTime || "",
-                metaImage: null,
-                metaImageAlt: data.metaImageAlt || "",
-                ogImage: null,
-                ogImageAlt: data.ogImageAlt || "",
-                twitterImage: null,
-                twitterImageAlt: data.twitterImageAlt || "",
-            });
-        }
     });
 
     const { data: users } = useSWR({
@@ -158,6 +109,65 @@ const EditorComponent = () => {
         }
     }, [searchParams]);
 
+    useEffect(() => {
+        if (postData) {
+            setTitle(postData.title);
+            setPermalink(postData.slug);
+            setContent(postData.content);
+            setAuthor(postData.author?._id);
+            setType(postData.type);
+            setPublishedAt(moment(postData.publishedAt).format("YYYY-MM-DDTHH:mm"));
+            setStatus(postData.status);
+            setFeaturedImageCaption(postData.featuredImageCaption || "");
+            setPreviewImage(getImageSource(postData.thumbnailImage));
+            setSelectedCategories(postData.categories?.map((c: Record<string, string>) => c._id));
+            setSelectedTags(postData.tags?.map((t: Record<string, string>) => t._id));
+            setVideoSourceUrl(postData.videoSourceUrl);
+
+            // Update SEO postData.data
+            setSeoData({
+                metaTitle: postData.metaTitle || "",
+                metaDescription: postData.metaDescription || "",
+                keywords: postData.keywords || "",
+                canonicalUrl: postData.canonicalUrl || "",
+                robotsIndex: postData.robotsIndex !== undefined ? postData.robotsIndex : true,
+                robotsFollow: postData.robotsFollow !== undefined ? postData.robotsFollow : true,
+                robotsArchive: postData.robotsArchive !== undefined ? postData.robotsArchive : true,
+                robotsSnippet: postData.robotsSnippet !== undefined ? postData.robotsSnippet : true,
+                robotsImageIndex: postData.robotsImageIndex !== undefined ? postData.robotsImageIndex : true,
+                ogTitle: postData.ogTitle || "",
+                ogDescription: postData.ogDescription || "",
+                ogType: postData.ogType || "article",
+                ogUrl: postData.ogUrl || "",
+                ogSiteName: postData.ogSiteName || "",
+                ogLocale: postData.ogLocale || "en_US",
+                twitterCard: postData.twitterCard || "summary_large_image",
+                twitterTitle: postData.twitterTitle || "",
+                twitterDescription: postData.twitterDescription || "",
+                twitterSite: postData.twitterSite || "",
+                twitterCreator: postData.twitterCreator || "",
+                author: postData.seoAuthor || "",
+                publisher: postData.publisher || "",
+                focusKeyword: postData.focusKeyword || "",
+                readingTime: postData.readingTime || "",
+                metaImage: null,
+                metaImageAlt: postData.metaImageAlt || "",
+                ogImage: null,
+                ogImageAlt: postData.ogImageAlt || "",
+                twitterImage: null,
+                twitterImageAlt: postData.twitterImageAlt || "",
+            });
+
+            //update preview images
+            if (postData.metaImage)
+                setMetaImagePreview(getImageSource(postData.metaImage));
+            if (postData.ogImage)
+                setOgImagePreview(getImageSource(postData.ogImage));
+            if (postData.twitterImage)
+                setTwitterImagePreview(getImageSource(postData.twitterImage));
+        }
+    }, [postData])
+
     const [submitLoading, setSubmitLoading] = useState<boolean>(false);
     //FormValues
     const [title, setTitle] = useState<string>("");
@@ -176,6 +186,10 @@ const EditorComponent = () => {
     const [videoSourceUrl, setVideoSourceUrl] = useState<string>("");
 
     // SEO Data State
+    const [metaImagePreview, setMetaImagePreview] = useState<string>("");
+    const [ogImagePreview, setOgImagePreview] = useState<string>("");
+    const [twitterImagePreview, setTwitterImagePreview] = useState<string>("");
+
     const [seoData, setSeoData] = useState({
         metaTitle: "",
         metaDescription: "",
@@ -476,6 +490,12 @@ const EditorComponent = () => {
                         postTitle={title}
                         postContent={content}
                         postSlug={permalink}
+                        metaImagePreview={metaImagePreview}
+                        setMetaImagePreview={setMetaImagePreview}
+                        ogImagePreview={ogImagePreview}
+                        setOgImagePreview={setOgImagePreview}
+                        twitterImagePreview={twitterImagePreview}
+                        setTwitterImagePreview={setTwitterImagePreview}
                     />
                 </div>
                 <div className="flex flex-col gap-4">
@@ -635,7 +655,6 @@ const EditorComponent = () => {
                     <TagSelector selectedTags={selectedTags} setSelectedTags={setSelectedTags} />
                 </div>
             </div>
-
         </>
     );
 }

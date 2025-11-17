@@ -57,7 +57,11 @@ const UpdateJockComponent = ({ open, onOpenChange, selected }:
 
 
     const { data: stationList, isLoading: isStationListLoading } = useSWR(
-        open ? { url: "v1/stations", token } : null, fetcher
+        open ? {
+            url: "v1/stations", token, params: {
+                limit: 0
+            }
+        } : null, fetcher
     );
 
     const formSchema = z.object({

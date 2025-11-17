@@ -26,7 +26,11 @@ const JocksListComponent = () => {
     const [selected, setSelected] = useState<string | null>(null);
     const [selectedStation, setSelectedStation] = useState("");
 
-    const { data: stations, isLoading: isStationsLoading } = useSWR({ url: "v1/stations", token }, fetcher)
+    const { data: stations, isLoading: isStationsLoading } = useSWR({
+        url: "v1/stations", token, params: {
+            limit: 0
+        },
+    }, fetcher)
 
     const { data: jocks, isLoading, error } = useSWR(
         selectedStation ? {

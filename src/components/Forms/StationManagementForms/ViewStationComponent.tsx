@@ -43,7 +43,11 @@ export default function ViewStationComponent({ selectedStationId, className }: {
         setDefaultLoading(true);
         setDefaultStation({ token, id: selectedStationId }).then(() => {
             setDefaultLoading(false);
-            mutate({ url: "v1/stations", token }); // Refresh stations list
+            mutate({
+                url: "v1/stations", token, params: {
+                    limit: 0
+                }
+            }); // Refresh stations list
             console.log("Station set as default");
         }).catch((error) => {
             setDefaultLoading(false);

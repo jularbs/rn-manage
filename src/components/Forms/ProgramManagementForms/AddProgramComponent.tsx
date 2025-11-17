@@ -27,7 +27,11 @@ const AddProgramComponent = ({ open, onOpenChange }: { open: boolean, onOpenChan
     const [previewImage, setPreviewImage] = useState<string>("");
 
     const { data: stationList } = useSWR(
-        open ? { url: "v1/stations", token } : null, fetcher
+        open ? {
+            url: "v1/stations", token, params: {
+                limit: 0
+            }
+        } : null, fetcher
         // fetcher
     );
 
@@ -43,7 +47,7 @@ const AddProgramComponent = ({ open, onOpenChange }: { open: boolean, onOpenChan
                 .optional()
                 .refine(file => !file || ["image/jpeg", "image/jpg", "image/png", "image/webp"].includes(file.type), {
                     message: '.jpg, .jpeg, .png and .webp files are accepted.',
-                })  
+                })
                 .refine(file => !file || file.size !== 0 || file.size <= 10 * 1024 * 1024, { message: "Max image size exceeded (10MB)" })
     }).refine((data) => {
         const startIndex = TIMES_DATA.findIndex(time => time.value === data.startTime);
