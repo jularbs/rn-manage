@@ -121,7 +121,11 @@ export default function UpdateStationForm({ id = "", open, onOpenChange }:
 
         updateStation({ token: token, data: formData, id: id }).then((res) => {
             //handle created data
-            mutate({ url: "v1/stations", token })
+            mutate({
+                url: "v1/stations", token, params: {
+                    limit: 0
+                }
+            })
             mutate({ url: "v1/stations/id/" + id, token })
             setPreviewImage("");
             toast.success("Success!", {

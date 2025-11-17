@@ -11,7 +11,7 @@ import { getCookie } from "typescript-cookie";
 import { removeStation } from "@/actions/station";
 
 const RemoveStationForm = ({ id = "", open, onOpenChange }:
-    { id: string, open: boolean, onOpenChange: React.Dispatch<React.SetStateAction<boolean>>}) => {
+    { id: string, open: boolean, onOpenChange: React.Dispatch<React.SetStateAction<boolean>> }) => {
     const token = getCookie("token");
 
     const [loading, setLoading] = useState(false)
@@ -30,7 +30,11 @@ const RemoveStationForm = ({ id = "", open, onOpenChange }:
                 description: (response as { message: string }).message,
                 duration: 5000
             });
-            mutate({ url: "v1/stations", token: token });
+            mutate({
+                url: "v1/stations", token: token, params: {
+                    limit: 0
+                }
+            });
         }).catch((err: { message: unknown; }) => {
             setLoading(false);
             toast.error("Invalid Request", {
