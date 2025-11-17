@@ -157,6 +157,14 @@ const EditorComponent = () => {
                 twitterImage: null,
                 twitterImageAlt: postData.twitterImageAlt || "",
             });
+
+            //update preview images
+            if (postData.metaImage)
+                setMetaImagePreview(getImageSource(postData.metaImage));
+            if (postData.ogImage)
+                setOgImagePreview(getImageSource(postData.ogImage));
+            if (postData.twitterImage)
+                setTwitterImagePreview(getImageSource(postData.twitterImage));
         }
     }, [postData])
 
@@ -178,6 +186,10 @@ const EditorComponent = () => {
     const [videoSourceUrl, setVideoSourceUrl] = useState<string>("");
 
     // SEO Data State
+    const [metaImagePreview, setMetaImagePreview] = useState<string>("");
+    const [ogImagePreview, setOgImagePreview] = useState<string>("");
+    const [twitterImagePreview, setTwitterImagePreview] = useState<string>("");
+
     const [seoData, setSeoData] = useState({
         metaTitle: "",
         metaDescription: "",
@@ -478,6 +490,12 @@ const EditorComponent = () => {
                         postTitle={title}
                         postContent={content}
                         postSlug={permalink}
+                        metaImagePreview={metaImagePreview}
+                        setMetaImagePreview={setMetaImagePreview}
+                        ogImagePreview={ogImagePreview}
+                        setOgImagePreview={setOgImagePreview}
+                        twitterImagePreview={twitterImagePreview}
+                        setTwitterImagePreview={setTwitterImagePreview}
                     />
                 </div>
                 <div className="flex flex-col gap-4">
@@ -637,7 +655,6 @@ const EditorComponent = () => {
                     <TagSelector selectedTags={selectedTags} setSelectedTags={setSelectedTags} />
                 </div>
             </div>
-
         </>
     );
 }

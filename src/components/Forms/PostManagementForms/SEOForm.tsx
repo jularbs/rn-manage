@@ -21,7 +21,7 @@ import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
 import { ImageIcon, XIcon, ChevronDownIcon, ChevronUpIcon, InfoIcon } from "lucide-react";
 import Image from "next/image";
-import { useState } from "react";
+import React, { useState } from "react";
 import { cn, ReplaceHtmlEntities } from "@/lib/utils";
 
 interface SEOData {
@@ -74,16 +74,18 @@ interface SEOFormProps {
     postTitle: string;
     postContent: string;
     postSlug: string;
+    metaImagePreview: string;
+    ogImagePreview: string;
+    twitterImagePreview: string;
+    setMetaImagePreview: React.Dispatch<React.SetStateAction<string>>;
+    setOgImagePreview: React.Dispatch<React.SetStateAction<string>>;
+    setTwitterImagePreview: React.Dispatch<React.SetStateAction<string>>;
 }
 
-const SEOForm = ({ seoData, setSeoData, postTitle, postContent, postSlug }: SEOFormProps) => {
+const SEOForm = ({ seoData, setSeoData, postTitle, postContent, postSlug, metaImagePreview, setMetaImagePreview, ogImagePreview, setOgImagePreview, twitterImagePreview, setTwitterImagePreview }: SEOFormProps) => {
     const [isAdvancedOpen, setIsAdvancedOpen] = useState(false);
     const [isSocialOpen, setIsSocialOpen] = useState(false);
     const [isRobotsOpen, setIsRobotsOpen] = useState(false);
-
-    const [metaImagePreview, setMetaImagePreview] = useState<string>("");
-    const [ogImagePreview, setOgImagePreview] = useState<string>("");
-    const [twitterImagePreview, setTwitterImagePreview] = useState<string>("");
 
     const updateSeoData = <K extends keyof SEOData>(field: K, value: SEOData[K]) => {
         setSeoData({
