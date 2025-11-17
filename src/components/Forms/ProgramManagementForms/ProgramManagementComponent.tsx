@@ -20,7 +20,7 @@ const ProgramManagementComponent = () => {
     const [selectedStation, setSelectedStation] = useState("");
     const [selectedProgram, setSelectedProgram] = useState(null);
 
-    const { data: stationList, isLoading: isStationListLoading } = useSWR({ url: "v1/stations" }, fetcher, {
+    const { data: stationList, isLoading: isStationListLoading } = useSWR({ url: "v1/stations", token: getCookie("token"), params: { limit: 0 } }, fetcher, {
         onSuccess: (data) => {
             //Set selected station to index 0 in response
             if (data && data.data[0]) {

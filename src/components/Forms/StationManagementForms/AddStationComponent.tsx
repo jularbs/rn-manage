@@ -86,7 +86,11 @@ export default function AddStationComponent({ open, onOpenChange }:
 
         createStation({ token: token, data: formData }).then((res) => {
             //handle created data
-            mutate({ url: "v1/stations", token })
+            mutate({
+                url: "v1/stations", token, params: {
+                    limit: 0
+                }
+            });
             form.reset({});
             setPreviewImage("");
             toast.success("Success!", {

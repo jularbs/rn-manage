@@ -25,7 +25,11 @@ import { Badge } from "@/components/ui/badge";
 const StationManagementList = () => {
     const token = getCookie("token")
     const [selected, setSelected] = useState<string | null>(null);
-    const { data: stations, isLoading, error } = useSWR({ url: "v1/stations", token }, fetcher)
+    const { data: stations, isLoading, error } = useSWR({
+        url: "v1/stations", token, params: {
+            limit: 0
+        }
+    }, fetcher)
 
     const [addOpen, setAddOpen] = useState<boolean>(false)
 
