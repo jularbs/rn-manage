@@ -112,7 +112,7 @@ const SEOForm = ({ seoData, setSeoData, postTitle, postContent, postSlug, metaIm
 
         // Auto-generate canonical URL
         if (postSlug) {
-            updatedData.canonicalUrl = `${process.env.NEXT_PUBLIC_WEBSITE_URL}/post/${postSlug}`;
+            updatedData.canonicalUrl = `${process.env.NEXT_PUBLIC_WEB_DOMAIN}/post/${postSlug}`;
         }
 
         // Auto-fill Open Graph data using the newly generated values
