@@ -123,34 +123,34 @@ const EditorComponent = () => {
         featuredImage:
             z.instanceof(File, { message: "Image is required" })
                 .optional()
-                .refine(file => !file || ["image/jpeg", "image/jpg", "image/png", "image/webp"].includes(file.type), {
-                    message: '.jpg, .jpeg, .png and .webp files are accepted for featured image.',
+                .refine(file => !file || ["image/jpeg", "image/jpg", "image/png", "image/webp", "image/avif"].includes(file.type), {
+                    message: '.jpg, .jpeg, .png, .avif and .webp files are accepted for featured image.',
                 })
-                .refine(file => !file || file.size !== 0 || file.size <= 10 * 1024 * 1024, { message: "Max image size exceeded (10MB) for featured image" }),
+                .refine(file => !file || (file.size > 0 && file.size <= 10 * 1024 * 1024), { message: "Max image size exceeded (10MB) for featured image" }),
 
         ogImage:
             z.instanceof(File, { message: "Image is required" })
                 .optional()
-                .refine(file => !file || ["image/jpeg", "image/jpg", "image/png", "image/webp"].includes(file.type), {
-                    message: '.jpg, .jpeg, .png and .webp files are accepted for OG Image',
+                .refine(file => !file || ["image/jpeg", "image/jpg", "image/png", "image/webp", "image/avif"].includes(file.type), {
+                    message: '.jpg, .jpeg, .png, .avif and .webp files are accepted for OG Image',
                 })
-                .refine(file => !file || file.size !== 0 || file.size <= 10 * 1024 * 1024, { message: "Max image size exceeded (10MB) for OG Image" }),
+                .refine(file => !file || (file.size > 0 && file.size <= 10 * 1024 * 1024), { message: "Max image size exceeded (10MB) for OG Image" }),
 
         twitterImage:
             z.instanceof(File, { message: "Image is required" })
                 .optional()
-                .refine(file => !file || ["image/jpeg", "image/jpg", "image/png", "image/webp"].includes(file.type), {
-                    message: '.jpg, .jpeg, .png and .webp files are accepted for Twitter Image.',
+                .refine(file => !file || ["image/jpeg", "image/jpg", "image/png", "image/webp", "image/avif"].includes(file.type), {
+                    message: '.jpg, .jpeg, .png, .avif and .webp files are accepted for Twitter Image.',
                 })
-                .refine(file => !file || file.size !== 0 || file.size <= 10 * 1024 * 1024, { message: "Max image size exceeded (10MB)" }),
+                .refine(file => !file || (file.size > 0 && file.size <= 10 * 1024 * 1024), { message: "Max image size exceeded (10MB) for Twitter Image" }),
 
         metaImage:
             z.instanceof(File, { message: "Image is required" })
                 .optional()
-                .refine(file => !file || ["image/jpeg", "image/jpg", "image/png", "image/webp"].includes(file.type), {
-                    message: '.jpg, .jpeg, .png and .webp files are accepted for Meta Image.',
+                .refine(file => !file || ["image/jpeg", "image/jpg", "image/png", "image/webp", "image/avif"].includes(file.type), {
+                    message: '.jpg, .jpeg, .png, .avif and .webp files are accepted for Meta Image.',
                 })
-                .refine(file => !file || file.size !== 0 || file.size <= 10 * 1024 * 1024, { message: "Max image size exceeded (10MB) for Meta Image" })
+                .refine(file => !file || (file.size > 0 && file.size <= 10 * 1024 * 1024), { message: "Max image size exceeded (10MB) for Meta Image" })
     }).refine((data) => {
         // If status is "published", require either a new featuredImage or existing previewImage
         if (data.status === "published") {
@@ -633,6 +633,7 @@ const EditorComponent = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                     <FormItem>
                         <FormLabel className="text-sm font-medium">SEO Meta Image</FormLabel>
+                        {form.formState.errors.metaImage && <p className="text-xs text-red-600 mt-1">{form.formState.errors.metaImage.message as string}</p>}
                         {metaImagePreview ? (
                             <div className="relative aspect-video bg-accent rounded-sm overflow-hidden">
                                 <Image
@@ -817,6 +818,7 @@ const EditorComponent = () => {
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                                     <FormItem>
                                         <FormLabel className="text-sm font-medium">Open Graph Image</FormLabel>
+                                        {form.formState.errors.ogImage && <p className="text-xs text-red-600 mt-1">{form.formState.errors.ogImage.message as string}</p>}
                                         {ogImagePreview ? (
                                             <div className="relative aspect-video bg-accent rounded-sm overflow-hidden">
                                                 <Image src={ogImagePreview} alt="OG image preview" fill className="object-cover" />
@@ -967,6 +969,7 @@ const EditorComponent = () => {
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                                     <FormItem>
                                         <FormLabel className="text-sm font-medium">Twitter Image</FormLabel>
+                                        {form.formState.errors.twitterImage && <p className="text-xs text-red-600 mt-1">{form.formState.errors.twitterImage.message as string}</p>}
                                         {twitterImagePreview ? (
                                             <div className="relative aspect-video bg-accent rounded-sm overflow-hidden">
                                                 <Image src={twitterImagePreview} alt="Twitter image preview" fill className="object-cover" />
