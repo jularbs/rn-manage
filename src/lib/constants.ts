@@ -17,7 +17,7 @@ export const AUDIO_STREAMING_OPTION_KEY = "AUDIO_LIVESTREAM_URL";
 
 //Article Types
 export const ARTICLE_TYPE_BASIC = "basic article";
-export const ARTICLE_TYPE_VIDEO = "video";
+export const ARTICLE_TYPE_VIDEO = "video article";
 export const ARTICLE_TYPE_PHOTO = "photo bucket";
 
 //Task Status
