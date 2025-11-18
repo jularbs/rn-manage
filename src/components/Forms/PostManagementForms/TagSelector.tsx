@@ -25,14 +25,17 @@ import {
     SheetTitle,
 } from "@/components/ui/sheet"
 import useSWR from "swr";
+import { UseFormReturn } from "react-hook-form";
+import { FormField } from "@/components/ui/form";
 
-export default function TagSelector({ selectedTags, setSelectedTags }: {
-    selectedTags: string[],
-    setSelectedTags: React.Dispatch<React.SetStateAction<string[]>>
+export default function TagSelector({ form }: {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    form: UseFormReturn<any>
 }) {
     const token = getCookie("token");
     const { ref, inView } = useInView({ threshold: .9 });
 
+    const selectedTags = form.watch("tags");
     const [limit,] = useState(15);
     const [searchQuery, setSearchQuery] = useState("");
     const [isAllFetched, setIsAllFetched] = useState(false);
@@ -62,7 +65,7 @@ export default function TagSelector({ selectedTags, setSelectedTags }: {
     },
         fetcher,
         {
-            revalidateAll: true,    
+            revalidateAll: true,
             revalidateFirstPage: false
         }
     );
@@ -89,52 +92,64 @@ export default function TagSelector({ selectedTags, setSelectedTags }: {
     const displayTags = () => {
         return tags?.map(page => {
             return page.data?.map((tag: Record<string, string>) => {
-                return <Label key={tag._id} className="hover:bg-accent/50 flex items-start gap-3 rounded-lg border p-2 has-[[aria-checked=true]]:border-blue-600 has-[[aria-checked=true]]:bg-blue-50 dark:has-[[aria-checked=true]]:border-blue-900 dark:has-[[aria-checked=true]]:bg-blue-950">
-                    <Checkbox
-                        className="data-[state=checked]:border-blue-600 data-[state=checked]:bg-blue-600 data-[state=checked]:text-white dark:data-[state=checked]:border-blue-700 dark:data-[state=checked]:bg-blue-700"
-                        checked={selectedTags.includes(tag._id)}
-                        onCheckedChange={(checked) => {
-                            return checked
-                                ? setSelectedTags([...selectedTags, tag._id])
-                                : setSelectedTags(
-                                    selectedTags?.filter(
-                                        (value) => value !== tag._id
-                                    )
-                                )
-                        }}
-                    />
-                    <div className="grid gap-1.5 font-normal">
-                        <p className="text-sm leading-none font-medium">
-                            {tag.name}
-                        </p>
-                    </div>
-                </Label>
+                return <FormField
+                    key={tag._id}
+                    name="tags"
+                    control={form.control}
+                    render={({ field }) => (
+                        <Label key={tag._id} className="hover:bg-accent/50 flex items-start gap-3 rounded-lg border p-2 has-[[aria-checked=true]]:border-blue-600 has-[[aria-checked=true]]:bg-blue-50 dark:has-[[aria-checked=true]]:border-blue-900 dark:has-[[aria-checked=true]]:bg-blue-950">
+                            <Checkbox
+                                className="data-[state=checked]:border-blue-600 data-[state=checked]:bg-blue-600 data-[state=checked]:text-white dark:data-[state=checked]:border-blue-700 dark:data-[state=checked]:bg-blue-700"
+                                checked={selectedTags.includes(tag._id)}
+                                onCheckedChange={(checked) => {
+                                    return checked
+                                        ? field.onChange([...selectedTags, tag._id])
+                                        : field.onChange(
+                                            selectedTags?.filter(
+                                                (value: string) => value !== tag._id
+                                            )
+                                        )
+                                }}
+                            />
+                            <div className="grid gap-1.5 font-normal">
+                                <p className="text-sm leading-none font-medium">
+                                    {tag.name}
+                                </p>
+                            </div>
+                        </Label>
+                    )} />
             })
         })
     }
 
     const displaySelectedTags = () => {
         return selectedTagsData?.data?.map((tag: Record<string, string>) => {
-            return <Label key={tag._id} className="hover:bg-accent/50 flex items-start gap-3 rounded-lg border p-2 has-[[aria-checked=true]]:border-blue-600 has-[[aria-checked=true]]:bg-blue-50 dark:has-[[aria-checked=true]]:border-blue-900 dark:has-[[aria-checked=true]]:bg-blue-950">
-                <Checkbox
-                    className="data-[state=checked]:border-blue-600 data-[state=checked]:bg-blue-600 data-[state=checked]:text-white dark:data-[state=checked]:border-blue-700 dark:data-[state=checked]:bg-blue-700"
-                    checked={selectedTags.includes(tag._id)}
-                    onCheckedChange={(checked) => {
-                        return checked
-                            ? setSelectedTags([...selectedTags, tag._id])
-                            : setSelectedTags(
-                                selectedTags?.filter(
-                                    (value) => value !== tag._id
-                                )
-                            )
-                    }}
-                />
-                <div className="grid gap-1.5 font-normal">
-                    <p className="text-sm leading-none font-medium">
-                        {tag.name}
-                    </p>
-                </div>
-            </Label>
+            return <FormField
+                key={tag._id}
+                name="tags"
+                control={form.control}
+                render={({ field }) => (
+                    <Label key={tag._id} className="hover:bg-accent/50 flex items-start gap-3 rounded-lg border p-2 has-[[aria-checked=true]]:border-blue-600 has-[[aria-checked=true]]:bg-blue-50 dark:has-[[aria-checked=true]]:border-blue-900 dark:has-[[aria-checked=true]]:bg-blue-950">
+                        <Checkbox
+                            className="data-[state=checked]:border-blue-600 data-[state=checked]:bg-blue-600 data-[state=checked]:text-white dark:data-[state=checked]:border-blue-700 dark:data-[state=checked]:bg-blue-700"
+                            checked={selectedTags.includes(tag._id)}
+                            onCheckedChange={(checked) => {
+                                return checked
+                                    ? field.onChange([...selectedTags, tag._id])
+                                    : field.onChange(
+                                        selectedTags?.filter(
+                                            (value: string) => value !== tag._id
+                                        )
+                                    )
+                            }}
+                        />
+                        <div className="grid gap-1.5 font-normal">
+                            <p className="text-sm leading-none font-medium">
+                                {tag.name}
+                            </p>
+                        </div>
+                    </Label>
+                )} />
         })
     }
 
@@ -158,7 +173,7 @@ export default function TagSelector({ selectedTags, setSelectedTags }: {
                         position: "top-center"
 
                     });
-                    setSelectedTags([...selectedTags, res.data._id]);
+                    form.setValue("tags", [...selectedTags, res.data._id]);
                     //mutate to add the new tag to the top of the list
                     tagsMutate();
                 }
@@ -200,6 +215,7 @@ export default function TagSelector({ selectedTags, setSelectedTags }: {
                         "font-semibold uppercase text-[10px] cursor-pointer",
                     )} variant="secondary" onClick={() => setIsSheetOpen(true)}>{selectedTags.length} selected</Badge>}
                 </div>
+                {form.formState.errors.tags && <p className="text-xs text-red-600 mt-1">{form.formState.errors.tags.message as string}</p>}
             </CardHeader>
             <CardContent className="p-0 flex flex-col gap-2">
                 <Input placeholder="Search Tags..." onChange={debouncedOnChange} />
