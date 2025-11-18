@@ -160,6 +160,15 @@ const EditorComponent = () => {
     }, {
         message: "Featured image is required when publishing an article",
         path: ["featuredImage"]
+    }).refine((data) => {
+        // If type is ARTICLE_TYPE_VIDEO, require videoSourceUrl
+        if (data.type === ARTICLE_TYPE_VIDEO) {
+            return data.videoSourceUrl && data.videoSourceUrl.trim() !== "";
+        }
+        return true;
+    }, {
+        message: "Video source URL is required for video articles",
+        path: ["videoSourceUrl"]
     })
 
     const form = useForm<z.infer<typeof formSchema>>({
@@ -1372,7 +1381,12 @@ const EditorComponent = () => {
                                         render={({ field }) => (
                                             <FormItem>
                                                 <FormLabel className="text-xs font-semibold ml-1">Type</FormLabel>
-                                                <Select value={field.value} onValueChange={field.onChange}>
+                                                <Select value={field.value} onValueChange={(value) => {
+                                                    if (value === ARTICLE_TYPE_BASIC) {
+                                                        form.setValue("videoSourceUrl", "");
+                                                    }
+                                                    field.onChange(value);
+                                                }}>
                                                     <SelectTrigger className="w-full">
                                                         <SelectValue placeholder="Select Type..." />
                                                     </SelectTrigger>
@@ -1381,13 +1395,17 @@ const EditorComponent = () => {
                                                         <SelectItem value={ARTICLE_TYPE_VIDEO}>Video Article</SelectItem>
                                                     </SelectContent>
                                                 </Select>
-                                                {field.value === ARTICLE_TYPE_VIDEO && <Button className="w-full mt-2 cursor-pointer"
-                                                    type="button"
-                                                    onClick={() => {
-                                                        setIsFeaturedVideoManagementOpen(true);
-                                                    }}>
-                                                    Manage Featured Video
-                                                </Button>}
+                                                {field.value === ARTICLE_TYPE_VIDEO &&
+                                                    <div>
+                                                        {form.formState.errors.videoSourceUrl && <p className="text-xs text-red-600 mt-1">{form.formState.errors.videoSourceUrl.message as string}</p>}
+                                                        <Button className="w-full mt-2 cursor-pointer"
+                                                            type="button"
+                                                            onClick={() => {
+                                                                setIsFeaturedVideoManagementOpen(true);
+                                                            }}>
+                                                            Manage Featured Video
+                                                        </Button>
+                                                    </div>}
                                                 <FormMessage className="text-xs ml-1" />
                                             </FormItem>
                                         )} />
