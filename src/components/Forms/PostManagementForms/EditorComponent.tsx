@@ -240,7 +240,7 @@ const EditorComponent = () => {
                         color: "white",
                         border: "none",
                     },
-                    description: res.message,
+                    description: res.message || "Post updated successfully!",
                     duration: 5000,
                     position: "top-center"
                 });
@@ -278,7 +278,7 @@ const EditorComponent = () => {
                         color: "white",
                         border: "none"
                     },
-                    description: res.message,
+                    description: res.message || "Post created successfully!",
                     duration: 5000,
                     position: "top-center"
                 });
