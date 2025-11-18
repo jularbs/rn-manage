@@ -3,23 +3,28 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { useEffect, useState } from "react";
 import ReactPlayer from "react-player";
 import { toast } from "sonner";
+import { UseFormReturn } from "react-hook-form";
 
-export default function FeaturedVideoManagement({
-    open, onOpenChange, videoURL, setVideoURL
-}: {
+interface FeaturedVideoManagementProps {
     open: boolean;
     onOpenChange: React.Dispatch<React.SetStateAction<boolean>>;
-    videoURL: string;
-    setVideoURL: React.Dispatch<React.SetStateAction<string>>;
-}) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    form: UseFormReturn<any>;
+}
 
+export default function FeaturedVideoManagement({
+    open, 
+    onOpenChange, 
+    form
+}: FeaturedVideoManagementProps) {
     const [inputValue, setInputValue] = useState<string>("");
 
     useEffect(() => {
         if (open) {
-            setInputValue(videoURL);
+            const currentValue = form.getValues("videoSourceUrl");
+            setInputValue(typeof currentValue === 'string' ? currentValue : "");
         }
-    }, [open, videoURL]);
+    }, [open, form]);
     return <>
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className="max-h-[70vh] overflow-y-auto top-5 translate-y-0">
@@ -49,7 +54,7 @@ export default function FeaturedVideoManagement({
                             </div>
                         )}
                         <Button onClick={() => {
-                            setVideoURL(inputValue);
+                            form.setValue("videoSourceUrl", inputValue);
                             onOpenChange(false);
                             toast.success("Success!", {
                                 style: {
