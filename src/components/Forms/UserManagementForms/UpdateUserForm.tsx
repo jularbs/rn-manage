@@ -62,7 +62,7 @@ const UpdateUserForm = ({ id = "", open, onOpenChange }:
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
         setLoading(true)
-        updateUser({ data: { ...values, regStatus: 1 }, token: token }).then(() => {
+        updateUser({ data: { ...values, regStatus: 1 }, token: token, id: values._id }).then(() => {
             setLoading(false);
             onOpenChange(false);
             mutate({ url: "v1/users", params: { accountVerified: true }, token });
