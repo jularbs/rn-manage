@@ -164,7 +164,7 @@ export const changePassword = async ({
   data: Record<string, string | number>;
 }) => {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/v2/auth/change-password`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/v1/auth/change-password`, {
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",

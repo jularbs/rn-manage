@@ -23,7 +23,7 @@ import {
 } from "@/components/ui/form"
 import { getCookie } from "typescript-cookie"
 import { toast } from "sonner"
-import { LoaderCircle } from "lucide-react"
+import { Eye, EyeOffIcon, LoaderCircle } from "lucide-react"
 import { changePassword } from "@/actions/auth"
 
 export function ChangePasswordForm({
@@ -33,8 +33,8 @@ export function ChangePasswordForm({
 
     const token = getCookie("token");
     const [loading, setLoading] = useState(false);
-    // const [showPassword, setShowPassword] = useState(false);
-    // const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
     const formSchema = z.object({
         currentPassword: z.string()
@@ -72,10 +72,12 @@ export function ChangePasswordForm({
             token: token,
             data: {
                 currentPassword: data.currentPassword,
-                password: data.password
+                newPassword: data.password,
+                confirmPassword: data.confirm
             }
         }).then(res => {
             setLoading(false);
+            form.reset();
             toast.success("Success!", {
                 style: {
                     background: "rgb(56, 142, 60)",
@@ -136,11 +138,20 @@ export function ChangePasswordForm({
                                         <FormItem>
                                             <FormLabel>New Password</FormLabel>
                                             <FormControl>
-                                                <Input
-                                                    type="password"
-                                                    placeholder="Enter your new password"
-                                                    {...field}
-                                                />
+                                                <div className="relative">
+                                                    <FormControl>
+                                                        <Input
+                                                            type={showConfirmPassword ? "text" : "password"}
+                                                            placeholder="Enter your new password"
+                                                            {...field}
+                                                        />
+                                                    </FormControl>
+                                                    {showConfirmPassword ?
+                                                        <Eye className="absolute size-4 right-3 top-1/2 -translate-y-1/2 cursor-pointer"
+                                                            onClick={() => setShowPassword(!showPassword)} /> :
+                                                        <EyeOffIcon className="absolute size-4 right-3 top-1/2 -translate-y-1/2 cursor-pointer"
+                                                            onClick={() => setShowPassword(!showPassword)} />}
+                                                </div>
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -153,13 +164,20 @@ export function ChangePasswordForm({
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>Confirm New Password</FormLabel>
-                                            <FormControl>
-                                                <Input
-                                                    type="password"
-                                                    placeholder="Confirm your new password"
-                                                    {...field}
-                                                />
-                                            </FormControl>
+                                            <div className="relative">
+                                                <FormControl>
+                                                    <Input
+                                                        type={showConfirmPassword ? "text" : "password"}
+                                                        placeholder="Confirm your new password"
+                                                        {...field}
+                                                    />
+                                                </FormControl>
+                                                {showConfirmPassword ?
+                                                    <Eye className="absolute size-4 right-3 top-1/2 -translate-y-1/2 cursor-pointer"
+                                                        onClick={() => setShowConfirmPassword(!showConfirmPassword)} /> :
+                                                    <EyeOffIcon className="absolute size-4 right-3 top-1/2 -translate-y-1/2 cursor-pointer"
+                                                        onClick={() => setShowConfirmPassword(!showConfirmPassword)} />}
+                                            </div>
                                             <FormMessage />
                                         </FormItem>
 

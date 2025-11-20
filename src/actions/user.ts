@@ -26,12 +26,14 @@ export const removeUser = async ({ id, token }: { id: string; token: string | un
 export const updateUser = async ({
   data,
   token,
+  id,
 }: {
   data: Record<string, string | boolean | number>;
   token: string | undefined;
+  id: string;
 }) => {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/v1/users/${data._id}`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/v1/users/${id}`, {
       headers: {
         Authorization: `Bearer ${token}`,
         Accept: "application/json",
@@ -55,4 +57,3 @@ export const updateUser = async ({
     };
   }
 };
-
