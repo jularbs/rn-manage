@@ -61,7 +61,7 @@ const PendingUserForm = ({ id = "", open, onOpenChange }:
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
         setLoading(true)
-        updateUser({ data: { ...values, accountVerified: true }, token: token }).then(() => {
+        updateUser({ data: { ...values, accountVerified: true }, token: token, id: values._id }).then(() => {
             setLoading(false);
             onOpenChange(false);
             mutate({ url: "v1/users", params: { accountVerified: true }, token });
