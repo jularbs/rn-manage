@@ -1268,68 +1268,80 @@ const EditorComponent = () => {
                                     </div>
                                 </CardHeader>
                                 <CardContent className="p-0 flex flex-col gap-2">
-                                    {/* Preview Post (no database changes) */}
                                     <Button
                                         type="button"
                                         className="bg-blue-600 text-white text-sm"
                                         onClick={() => {
                                             const values = form.getValues();
-                                            const authorObj = Array.isArray(users?.data)
-                                                ? (users!.data as Array<{ _id: string }>).find((u) => u._id === values.author)
-                                                : undefined;
-                                            // Build a lightweight payload for preview: strip large binary fields
-                                            const payload: Record<string, unknown> = {
-                                                ...values,
-                                                author: authorObj || { _id: values.author },
-                                                featuredImage: previewImage || null,
-                                            };
-
-                                            // Replace File objects with current preview URLs (Data URLs) or remove them
-                                            if (payload.featuredImage instanceof File) {
-                                                if (typeof previewImage === "string" && previewImage.length > 0) {
-                                                    payload.featuredImage = previewImage; // use current featured preview
-                                                } else {
-                                                    delete payload.featuredImage;
-                                                }
+                                            const slugVal = values.slug || 'preview';
+                                            const previewWindow = window.open(`${process.env.NEXT_PUBLIC_WEB_DOMAIN}/post/${slugVal}?preview=1`, '_blank');
+                                            if (!previewWindow) {
+                                                toast.error('Popup blocked');
+                                                return;
                                             }
-                                            // Explicitly remove social image fields from preview payload
-                                            delete payload.ogImage;
-                                            delete payload.twitterImage;
 
-                                            // Remove SEO/meta fields from preview payload to keep it lean
-                                            const metaKeysToRemove: string[] = [
-                                                // Core meta
-                                                "metaTitle", "metaDescription", "keywords", "canonicalUrl",
-                                                // Robots
-                                                "robotsIndex", "robotsFollow", "robotsArchive", "robotsSnippet", "robotsImageIndex",
-                                                // Open Graph
-                                                "ogTitle", "ogDescription", "ogUrl", "ogType", "ogSiteName", "ogLocale", "ogImageAlt",
-                                                // Twitter
-                                                "twitterCard", "twitterTitle", "twitterDescription", "twitterSite", "twitterCreator", "twitterImageAlt",
-                                                // Other SEO
-                                                "seoAuthor", "publisher", "focusKeyword", "readingTime",
+                                            // Build lightweight payload once
+                                            const payload: Record<string, unknown> = { ...values };
+                                            // Always use previewImage if available; otherwise fallback to existing postData.featuredImage object
+                                            if (typeof previewImage === 'string' && previewImage.length > 0) {
+                                                payload.featuredImage = { url: previewImage };
+                                                payload.thumbnailImage = { url: previewImage };
+                                            } else if (postData?.featuredImage) {
+                                                payload.featuredImage = postData.featuredImage;
+                                                payload.thumbnailImage = postData.thumbnailImage;
+                                            } else {
+                                                delete payload.featuredImage;
+                                                delete payload.thumbnailImage;
+                                            }
+
+                                            // Remove SEO Meta tags. Not needed for preview
+                                            const removeKeys = [
+                                                'metaTitle', 'metaDescription', 'keywords', 'canonicalUrl', 'robotsIndex', 'robotsFollow', 'robotsArchive', 'robotsSnippet', 'robotsImageIndex',
+                                                'ogTitle', 'ogDescription', 'ogUrl', 'ogType', 'ogSiteName', 'ogLocale', 'ogImage', 'ogImageAlt',
+                                                'twitterCard', 'twitterTitle', 'twitterDescription', 'twitterSite', 'twitterCreator', 'twitterImage', 'twitterImageAlt',
+                                                'seoAuthor', 'publisher', 'focusKeyword', 'readingTime', 'ogImage', 'twitterImage'
                                             ];
-                                            for (const k of metaKeysToRemove) {
-                                                if (k in payload) delete payload[k];
-                                            }
+                                            for (const k of removeKeys) delete payload[k];
+                                            for (const k of Object.keys(payload)) if (payload[k] === undefined) delete payload[k];
 
-                                            // Ensure undefined values are removed to reduce payload size
-                                            for (const key of Object.keys(payload)) {
 
-                                                const val = payload[key];
-                                                if (val === undefined) delete payload[key];
-                                            }
-
-                                            try {
-                                                // Encode JSON payload safely for URL in browser
-                                                const json = JSON.stringify(payload);
-                                                const base64 = btoa(encodeURIComponent(json));
-                                                const slugVal = values.slug || 'preview';
-                                                const url = `${process.env.NEXT_PUBLIC_WEB_DOMAIN}/post/${slugVal}?preview=1&data=${encodeURIComponent(base64)}`;
-                                                window.open(url, '_blank');
-                                            } catch {
-                                                toast.error('Unable to open preview');
-                                            }
+                                            let sent = false;
+                                            let attempts = 0;
+                                            const maxAttempts = 15; // 7.5s total after ready
+                                            let interval: number | undefined;
+                                            const startSending = () => {
+                                                if (sent) return;
+                                                sent = true;
+                                                interval = window.setInterval(() => {
+                                                    attempts++;
+                                                    try { previewWindow.postMessage({ type: 'RN_PREVIEW_POST', payload }, '*'); } catch { }
+                                                    if (attempts >= maxAttempts) {
+                                                        if (interval) clearInterval(interval);
+                                                        window.removeEventListener('message', acknowledgeHandler);
+                                                        window.removeEventListener('message', readyHandler);
+                                                    }
+                                                }, 500);
+                                            };
+                                            const acknowledgeHandler = (e: MessageEvent) => {
+                                                if (e.data && e.data.type === 'RN_PREVIEW_RECEIVED') {
+                                                    if (interval) clearInterval(interval);
+                                                    window.removeEventListener('message', acknowledgeHandler);
+                                                    window.removeEventListener('message', readyHandler);
+                                                }
+                                            };
+                                            const readyHandler = (e: MessageEvent) => {
+                                                if (e.data && e.data.type === 'RN_PREVIEW_READY') {
+                                                    startSending();
+                                                }
+                                                if (e.data && e.data.type === 'RN_PREVIEW_REQUEST') {
+                                                    // Preview window explicitly requests data; start sending if not already
+                                                    startSending();
+                                                }
+                                            };
+                                            window.addEventListener('message', acknowledgeHandler);
+                                            window.addEventListener('message', readyHandler);
+                                            // Fallback: start sending after 3s even if READY not captured
+                                            window.setTimeout(() => startSending(), 3000);
                                         }}
                                     >
                                         Preview Post
@@ -1520,7 +1532,7 @@ const EditorComponent = () => {
                         </div>
                     </div>
                 </form>
-            </Form>
+            </Form >
         </>
     );
 }
