@@ -1232,14 +1232,12 @@ const EditorComponent = () => {
         let interval: number | undefined;
         const maxAttempts = 15;
 
-        const webOrigin = process.env.NEXT_PUBLIC_WEB_DOMAIN || "*";
-
         const startSending = () => {
             if (sent) return;
             sent = true;
             interval = window.setInterval(() => {
                 attempts++;
-                try { previewWindow.postMessage({ type: 'RN_PREVIEW_POST', nonce, payload }, webOrigin); } catch { }
+                try { previewWindow.postMessage({ type: 'RN_PREVIEW_POST', nonce, payload }, '*'); } catch { }
                 if (attempts >= maxAttempts) {
                     if (interval) clearInterval(interval);
                     window.removeEventListener('message', acknowledgeHandler);
@@ -1249,7 +1247,6 @@ const EditorComponent = () => {
         };
 
         const acknowledgeHandler = (e: MessageEvent) => {
-            if (e.origin !== (process.env.NEXT_PUBLIC_WEB_DOMAIN || "")) return;
             if (!e.data || e.data.nonce !== nonce) return;
             if (e.data && e.data.type === 'RN_PREVIEW_RECEIVED') {
                 if (interval) clearInterval(interval);
@@ -1259,7 +1256,6 @@ const EditorComponent = () => {
         };
 
         const readyHandler = (e: MessageEvent) => {
-            if (e.origin !== (process.env.NEXT_PUBLIC_WEB_DOMAIN || "")) return;
             if (!e.data || e.data.nonce !== nonce) return;
             if (e.data && e.data.type === 'RN_PREVIEW_READY') {
                 readyReceived = true;
