@@ -118,7 +118,6 @@ const EditorComponent = () => {
         publisher: z.string().optional(),
         focusKeyword: z.string().optional(),
         readingTime: z.string().optional(),
-        metaImageAlt: z.string().optional(),
 
         featuredImage:
             z.instanceof(File, { message: "Image is required" })
@@ -143,14 +142,6 @@ const EditorComponent = () => {
                     message: '.jpg, .jpeg, .png, .avif and .webp files are accepted for Twitter Image.',
                 })
                 .refine(file => !file || (file.size > 0 && file.size <= 10 * 1024 * 1024), { message: "Max image size exceeded (10MB) for Twitter Image" }),
-
-        metaImage:
-            z.instanceof(File, { message: "Image is required" })
-                .optional()
-                .refine(file => !file || ["image/jpeg", "image/jpg", "image/png", "image/webp", "image/avif"].includes(file.type), {
-                    message: '.jpg, .jpeg, .png, .avif and .webp files are accepted for Meta Image.',
-                })
-                .refine(file => !file || (file.size > 0 && file.size <= 10 * 1024 * 1024), { message: "Max image size exceeded (10MB) for Meta Image" })
     }).refine((data) => {
         // If status is "published", require either a new featuredImage or existing previewImage
         if (data.status === "published") {
@@ -211,13 +202,11 @@ const EditorComponent = () => {
             publisher: "",
             focusKeyword: "",
             readingTime: "",
-            metaImageAlt: "",
             ogImageAlt: "",
             twitterImageAlt: "",
             featuredImage: undefined,
             ogImage: undefined,
             twitterImage: undefined,
-            metaImage: undefined,
         }
     });
 
@@ -408,15 +397,12 @@ const EditorComponent = () => {
             form.setValue("publisher", postData.publisher || "");
             form.setValue("focusKeyword", postData.focusKeyword || "");
             form.setValue("readingTime", postData.readingTime || "");
-            form.setValue("metaImageAlt", postData.metaImageAlt || "");
             form.setValue("ogImageAlt", postData.ogImageAlt || "");
             form.setValue("twitterImageAlt", postData.twitterImageAlt || "");
 
             //update preview images
             if (postData.featuredImage)
                 setPreviewImage(getImageSource(postData.featuredImage));
-            if (postData.metaImage)
-                setMetaImagePreview(getImageSource(postData.metaImage));
             if (postData.ogImage)
                 setOgImagePreview(getImageSource(postData.ogImage));
             if (postData.twitterImage)
@@ -428,7 +414,6 @@ const EditorComponent = () => {
 
     // Preview Image States
     const [previewImage, setPreviewImage] = useState<string>("");
-    const [metaImagePreview, setMetaImagePreview] = useState<string>("");
     const [ogImagePreview, setOgImagePreview] = useState<string>("");
     const [twitterImagePreview, setTwitterImagePreview] = useState<string>("");
 
@@ -503,21 +488,19 @@ const EditorComponent = () => {
         }
     };
 
-    const handleImageUpload = (field: 'metaImage' | 'ogImage' | 'twitterImage', file: File | undefined) => {
+    const handleImageUpload = (field: 'ogImage' | 'twitterImage', file: File | undefined) => {
         if (file) {
             const reader = new FileReader();
             reader.onloadend = () => {
                 form.setValue(field, file);
                 const result = reader.result as string;
-                if (field === 'metaImage') setMetaImagePreview(result);
-                else if (field === 'ogImage') setOgImagePreview(result);
+                if (field === 'ogImage') setOgImagePreview(result);
                 else if (field === 'twitterImage') setTwitterImagePreview(result);
             };
             reader.readAsDataURL(file);
         } else {
             form.setValue(field, undefined);
-            if (field === 'metaImage') setMetaImagePreview("");
-            else if (field === 'ogImage') setOgImagePreview("");
+            if (field === 'ogImage') setOgImagePreview("");
             else if (field === 'twitterImage') setTwitterImagePreview("");
         }
     };
@@ -637,72 +620,6 @@ const EditorComponent = () => {
                         )}
                     />
                 </div>
-                <Separator />
-                {/* Meta Image */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    <FormItem>
-                        <FormLabel className="text-sm font-medium">SEO Meta Image</FormLabel>
-                        {form.formState.errors.metaImage && <p className="text-xs text-red-600 mt-1">{form.formState.errors.metaImage.message as string}</p>}
-                        {metaImagePreview ? (
-                            <div className="relative aspect-video bg-accent rounded-sm overflow-hidden">
-                                <Image
-                                    src={metaImagePreview}
-                                    alt="Meta image preview"
-                                    fill
-                                    className="object-cover"
-                                />
-                                <Button
-                                    type="button"
-                                    size="icon"
-                                    variant="destructive"
-                                    className="absolute top-2 right-2 h-6 w-6"
-                                    onClick={() => handleImageUpload('metaImage', undefined)}
-                                >
-                                    <XIcon className="h-3 w-3" />
-                                </Button>
-                            </div>
-                        ) : (
-                            <label className="aspect-video bg-accent rounded-sm flex justify-center items-center cursor-pointer border-2 border-dashed border-gray-300 hover:border-gray-400 transition-colors">
-                                <div className="text-center">
-                                    <ImageIcon className="mx-auto mb-2" />
-                                    <span className="text-sm">Choose Meta Image</span>
-                                    <span className="block text-[10px] font-light">Defaults to featured image</span>
-                                </div>
-                                <input
-                                    type="file"
-                                    accept="image/*"
-                                    className="hidden"
-                                    onChange={(e) => {
-                                        const file = e.target.files?.[0] || undefined;
-                                        handleImageUpload('metaImage', file);
-                                    }}
-                                />
-                            </label>
-                        )}
-                    </FormItem>
-                    <div className="space-y-2">
-                        <FormField
-                            control={form.control}
-                            name="metaImageAlt"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel className="text-sm font-medium">Alt Text *</FormLabel>
-                                    <Textarea
-                                        placeholder="Describe the image for accessibility and SEO"
-                                        {...field}
-                                    />
-                                    <FormMessage className="text-xs font-light" />
-                                </FormItem>
-                            )}
-                        />
-                        <div className="text-xs text-gray-500">
-                            <p>• Uploaded featured image is used if none is provided</p>
-                            <p>• Recommended: 1200x630px (16:9)</p>
-                            <p>• Used for search results and social sharing</p>
-                        </div>
-                    </div>
-                </div>
-
                 <Separator />
 
                 {/* Social Media Meta Tags */}
