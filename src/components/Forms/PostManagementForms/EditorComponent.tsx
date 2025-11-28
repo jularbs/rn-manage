@@ -1156,7 +1156,17 @@ const EditorComponent = () => {
     const handlePreviewPost = async () => {
         const values = form.getValues();
         const slugVal = values.slug || 'preview';
-        const previewWindow = window.open(`${process.env.NEXT_PUBLIC_WEB_DOMAIN}/post/${slugVal}?preview=1`, '_blank');
+        // Generate short-lived nonce for binding the handshake
+        const nonce = (() => {
+            try {
+                const arr = new Uint8Array(16);
+                window.crypto?.getRandomValues(arr);
+                return Array.from(arr).map(b => b.toString(16).padStart(2, '0')).join('');
+            } catch {
+                return Math.random().toString(36).slice(2) + Date.now().toString(36);
+            }
+        })();
+        const previewWindow = window.open(`${process.env.NEXT_PUBLIC_WEB_DOMAIN}/post/${slugVal}?preview=1&nonce=${nonce}`, '_blank');
         if (!previewWindow) {
             toast.error('Popup blocked');
             return;
@@ -1222,12 +1232,14 @@ const EditorComponent = () => {
         let interval: number | undefined;
         const maxAttempts = 15;
 
+        const webOrigin = process.env.NEXT_PUBLIC_WEB_DOMAIN || "*";
+
         const startSending = () => {
             if (sent) return;
             sent = true;
             interval = window.setInterval(() => {
                 attempts++;
-                try { previewWindow.postMessage({ type: 'RN_PREVIEW_POST', payload }, '*'); } catch { }
+                try { previewWindow.postMessage({ type: 'RN_PREVIEW_POST', nonce, payload }, webOrigin); } catch { }
                 if (attempts >= maxAttempts) {
                     if (interval) clearInterval(interval);
                     window.removeEventListener('message', acknowledgeHandler);
@@ -1237,6 +1249,8 @@ const EditorComponent = () => {
         };
 
         const acknowledgeHandler = (e: MessageEvent) => {
+            if (e.origin !== (process.env.NEXT_PUBLIC_WEB_DOMAIN || "")) return;
+            if (!e.data || e.data.nonce !== nonce) return;
             if (e.data && e.data.type === 'RN_PREVIEW_RECEIVED') {
                 if (interval) clearInterval(interval);
                 window.removeEventListener('message', acknowledgeHandler);
@@ -1245,6 +1259,8 @@ const EditorComponent = () => {
         };
 
         const readyHandler = (e: MessageEvent) => {
+            if (e.origin !== (process.env.NEXT_PUBLIC_WEB_DOMAIN || "")) return;
+            if (!e.data || e.data.nonce !== nonce) return;
             if (e.data && e.data.type === 'RN_PREVIEW_READY') {
                 readyReceived = true;
                 startSending();
