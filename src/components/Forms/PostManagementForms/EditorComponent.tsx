@@ -1268,6 +1268,72 @@ const EditorComponent = () => {
                                     </div>
                                 </CardHeader>
                                 <CardContent className="p-0 flex flex-col gap-2">
+                                    {/* Preview Post (no database changes) */}
+                                    <Button
+                                        type="button"
+                                        className="bg-blue-600 text-white text-sm"
+                                        onClick={() => {
+                                            const values = form.getValues();
+                                            const authorObj = Array.isArray(users?.data)
+                                                ? (users!.data as Array<{ _id: string }>).find((u) => u._id === values.author)
+                                                : undefined;
+                                            // Build a lightweight payload for preview: strip large binary fields
+                                            const payload: Record<string, unknown> = {
+                                                ...values,
+                                                author: authorObj || { _id: values.author },
+                                                featuredImage: previewImage || null,
+                                            };
+
+                                            // Replace File objects with current preview URLs (Data URLs) or remove them
+                                            if (payload.featuredImage instanceof File) {
+                                                if (typeof previewImage === "string" && previewImage.length > 0) {
+                                                    payload.featuredImage = previewImage; // use current featured preview
+                                                } else {
+                                                    delete payload.featuredImage;
+                                                }
+                                            }
+                                            // Explicitly remove social image fields from preview payload
+                                            delete payload.ogImage;
+                                            delete payload.twitterImage;
+
+                                            // Remove SEO/meta fields from preview payload to keep it lean
+                                            const metaKeysToRemove: string[] = [
+                                                // Core meta
+                                                "metaTitle", "metaDescription", "keywords", "canonicalUrl",
+                                                // Robots
+                                                "robotsIndex", "robotsFollow", "robotsArchive", "robotsSnippet", "robotsImageIndex",
+                                                // Open Graph
+                                                "ogTitle", "ogDescription", "ogUrl", "ogType", "ogSiteName", "ogLocale", "ogImageAlt",
+                                                // Twitter
+                                                "twitterCard", "twitterTitle", "twitterDescription", "twitterSite", "twitterCreator", "twitterImageAlt",
+                                                // Other SEO
+                                                "seoAuthor", "publisher", "focusKeyword", "readingTime",
+                                            ];
+                                            for (const k of metaKeysToRemove) {
+                                                if (k in payload) delete payload[k];
+                                            }
+
+                                            // Ensure undefined values are removed to reduce payload size
+                                            for (const key of Object.keys(payload)) {
+
+                                                const val = payload[key];
+                                                if (val === undefined) delete payload[key];
+                                            }
+
+                                            try {
+                                                // Encode JSON payload safely for URL in browser
+                                                const json = JSON.stringify(payload);
+                                                const base64 = btoa(encodeURIComponent(json));
+                                                const slugVal = values.slug || 'preview';
+                                                const url = `${process.env.NEXT_PUBLIC_WEB_DOMAIN}/post/${slugVal}?preview=1&data=${encodeURIComponent(base64)}`;
+                                                window.open(url, '_blank');
+                                            } catch {
+                                                toast.error('Unable to open preview');
+                                            }
+                                        }}
+                                    >
+                                        Preview Post
+                                    </Button>
                                     <FormField
                                         control={form.control}
                                         name="author"
