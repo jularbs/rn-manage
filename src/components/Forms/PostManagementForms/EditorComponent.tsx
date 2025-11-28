@@ -1153,6 +1153,118 @@ const EditorComponent = () => {
         </Card>
     }
 
+    const handlePreviewPost = async () => {
+        const values = form.getValues();
+        const slugVal = values.slug || 'preview';
+        const previewWindow = window.open(`${process.env.NEXT_PUBLIC_WEB_DOMAIN}/post/${slugVal}?preview=1`, '_blank');
+        if (!previewWindow) {
+            toast.error('Popup blocked');
+            return;
+        }
+
+        // Build lightweight payload once (async-safe)
+        const payload: Record<string, unknown> = { ...values };
+
+        // Always use previewImage if available for featuredImage and thumbnailImage
+        if (typeof previewImage === 'string' && previewImage.length > 0) {
+            payload.featuredImage = previewImage;
+            payload.thumbnailImage = previewImage;
+        } else {
+            delete payload.featuredImage;
+            delete payload.thumbnailImage;
+        }
+
+        // Populate Tags data (async) before sending
+        if (values.tags && Array.isArray(values.tags) && values.tags.length > 0) {
+            try {
+                const tagsRes = await fetcher({
+                    url: "v1/tags",
+                    params: { id: JSON.stringify(values.tags) }
+                });
+                // Use response data array if available; else fallback to id objects
+                payload.tags = Array.isArray(tagsRes?.data) ? tagsRes.data : values.tags.map((id: string) => ({ _id: id }));
+            } catch {
+                payload.tags = values.tags.map((id: string) => ({ _id: id }));
+            }
+        } else {
+            payload.tags = [];
+        }
+
+        // Populate Categories data (async) before sending
+        if (values.categories && Array.isArray(values.categories) && values.categories.length > 0) {
+            try {
+                const categoriesRes = await fetcher({
+                    url: "v1/categories",
+                    params: { id: JSON.stringify(values.categories) }
+                });
+                // Use response data array if available; else fallback to id objects
+                payload.categories = Array.isArray(categoriesRes?.data) ? categoriesRes.data : values.categories.map((id: string) => ({ _id: id }));
+            } catch {
+                payload.categories = values.categories.map((id: string) => ({ _id: id }));
+            }
+        } else {
+            payload.categories = [];
+        }
+
+        // Remove SEO Meta tags. Not needed for preview
+        const removeKeys = [
+            'metaTitle', 'metaDescription', 'keywords', 'canonicalUrl', 'robotsIndex', 'robotsFollow', 'robotsArchive', 'robotsSnippet', 'robotsImageIndex',
+            'ogTitle', 'ogDescription', 'ogUrl', 'ogType', 'ogSiteName', 'ogLocale', 'ogImage', 'ogImageAlt',
+            'twitterCard', 'twitterTitle', 'twitterDescription', 'twitterSite', 'twitterCreator', 'twitterImage', 'twitterImageAlt',
+            'seoAuthor', 'publisher', 'focusKeyword', 'readingTime', 'ogImage', 'twitterImage'
+        ];
+        for (const k of removeKeys) delete payload[k];
+        for (const k of Object.keys(payload)) if (payload[k] === undefined) delete payload[k];
+
+        let sent = false;
+        let attempts = 0;
+        let readyReceived = false;
+        let interval: number | undefined;
+        const maxAttempts = 15;
+
+        const startSending = () => {
+            if (sent) return;
+            sent = true;
+            interval = window.setInterval(() => {
+                attempts++;
+                try { previewWindow.postMessage({ type: 'RN_PREVIEW_POST', payload }, '*'); } catch { }
+                if (attempts >= maxAttempts) {
+                    if (interval) clearInterval(interval);
+                    window.removeEventListener('message', acknowledgeHandler);
+                    window.removeEventListener('message', readyHandler);
+                }
+            }, 500);
+        };
+
+        const acknowledgeHandler = (e: MessageEvent) => {
+            if (e.data && e.data.type === 'RN_PREVIEW_RECEIVED') {
+                if (interval) clearInterval(interval);
+                window.removeEventListener('message', acknowledgeHandler);
+                window.removeEventListener('message', readyHandler);
+            }
+        };
+
+        const readyHandler = (e: MessageEvent) => {
+            if (e.data && e.data.type === 'RN_PREVIEW_READY') {
+                readyReceived = true;
+                startSending();
+            }
+            if (e.data && e.data.type === 'RN_PREVIEW_REQUEST') {
+                // Preview window explicitly requests data; start sending if not already
+                readyReceived = true;
+                startSending();
+            }
+        };
+
+        window.addEventListener('message', acknowledgeHandler);
+        window.addEventListener('message', readyHandler);
+
+        // Fallback: start sending after 3s even if READY not captured
+        window.setTimeout(() => {
+            if (!readyReceived) startSending();
+        }, 3000);
+    }
+
     return (
         <>
             <Script src="https://www.tiktok.com/embed.js" async />
@@ -1268,84 +1380,6 @@ const EditorComponent = () => {
                                     </div>
                                 </CardHeader>
                                 <CardContent className="p-0 flex flex-col gap-2">
-                                    <Button
-                                        type="button"
-                                        className="bg-blue-600 text-white text-sm"
-                                        onClick={() => {
-                                            const values = form.getValues();
-                                            const slugVal = values.slug || 'preview';
-                                            const previewWindow = window.open(`${process.env.NEXT_PUBLIC_WEB_DOMAIN}/post/${slugVal}?preview=1`, '_blank');
-                                            if (!previewWindow) {
-                                                toast.error('Popup blocked');
-                                                return;
-                                            }
-
-                                            // Build lightweight payload once
-                                            const payload: Record<string, unknown> = { ...values };
-                                            // Always use previewImage if available; otherwise fallback to existing postData.featuredImage object
-                                            if (typeof previewImage === 'string' && previewImage.length > 0) {
-                                                payload.featuredImage = { url: previewImage };
-                                                payload.thumbnailImage = { url: previewImage };
-                                            } else if (postData?.featuredImage) {
-                                                payload.featuredImage = postData.featuredImage;
-                                                payload.thumbnailImage = postData.thumbnailImage;
-                                            } else {
-                                                delete payload.featuredImage;
-                                                delete payload.thumbnailImage;
-                                            }
-
-                                            // Remove SEO Meta tags. Not needed for preview
-                                            const removeKeys = [
-                                                'metaTitle', 'metaDescription', 'keywords', 'canonicalUrl', 'robotsIndex', 'robotsFollow', 'robotsArchive', 'robotsSnippet', 'robotsImageIndex',
-                                                'ogTitle', 'ogDescription', 'ogUrl', 'ogType', 'ogSiteName', 'ogLocale', 'ogImage', 'ogImageAlt',
-                                                'twitterCard', 'twitterTitle', 'twitterDescription', 'twitterSite', 'twitterCreator', 'twitterImage', 'twitterImageAlt',
-                                                'seoAuthor', 'publisher', 'focusKeyword', 'readingTime', 'ogImage', 'twitterImage'
-                                            ];
-                                            for (const k of removeKeys) delete payload[k];
-                                            for (const k of Object.keys(payload)) if (payload[k] === undefined) delete payload[k];
-
-
-                                            let sent = false;
-                                            let attempts = 0;
-                                            const maxAttempts = 15; // 7.5s total after ready
-                                            let interval: number | undefined;
-                                            const startSending = () => {
-                                                if (sent) return;
-                                                sent = true;
-                                                interval = window.setInterval(() => {
-                                                    attempts++;
-                                                    try { previewWindow.postMessage({ type: 'RN_PREVIEW_POST', payload }, '*'); } catch { }
-                                                    if (attempts >= maxAttempts) {
-                                                        if (interval) clearInterval(interval);
-                                                        window.removeEventListener('message', acknowledgeHandler);
-                                                        window.removeEventListener('message', readyHandler);
-                                                    }
-                                                }, 500);
-                                            };
-                                            const acknowledgeHandler = (e: MessageEvent) => {
-                                                if (e.data && e.data.type === 'RN_PREVIEW_RECEIVED') {
-                                                    if (interval) clearInterval(interval);
-                                                    window.removeEventListener('message', acknowledgeHandler);
-                                                    window.removeEventListener('message', readyHandler);
-                                                }
-                                            };
-                                            const readyHandler = (e: MessageEvent) => {
-                                                if (e.data && e.data.type === 'RN_PREVIEW_READY') {
-                                                    startSending();
-                                                }
-                                                if (e.data && e.data.type === 'RN_PREVIEW_REQUEST') {
-                                                    // Preview window explicitly requests data; start sending if not already
-                                                    startSending();
-                                                }
-                                            };
-                                            window.addEventListener('message', acknowledgeHandler);
-                                            window.addEventListener('message', readyHandler);
-                                            // Fallback: start sending after 3s even if READY not captured
-                                            window.setTimeout(() => startSending(), 3000);
-                                        }}
-                                    >
-                                        Preview Post
-                                    </Button>
                                     <FormField
                                         control={form.control}
                                         name="author"
@@ -1420,30 +1454,41 @@ const EditorComponent = () => {
                                                 <FormMessage className="text-xs ml-1" />
                                             </FormItem>
                                         )} />
-                                    <DropdownMenu>
-                                        <DropdownMenuTrigger
-                                            className="flex items-center justify-center bg-black text-white rounded-md text-sm p-2 font-semibold cursor-pointer mt-2">
-                                            Save Changes
-                                            {submitLoading && <LoaderCircleIcon className="animate-spin h-4 w-4 ml-2" />}
-                                        </DropdownMenuTrigger>
-                                        <DropdownMenuContent className="w-(--radix-dropdown-menu-trigger-width)">
-                                            {/* <DropdownMenuItem className="py-3">Preview article</DropdownMenuItem> */}
-                                            <DropdownMenuItem className="py-3"
-                                                onClick={() => {
-                                                    form.setValue("status", "draft");
-                                                    form.handleSubmit(onSubmit)();
-                                                }}>
-                                                Save article as draft
-                                            </DropdownMenuItem>
-                                            <DropdownMenuItem className="font-semibold py-3"
-                                                onClick={() => {
-                                                    form.setValue("status", "published");
-                                                    form.handleSubmit(onSubmit)();
-                                                }}>
-                                                Publish article
-                                            </DropdownMenuItem>
-                                        </DropdownMenuContent>
-                                    </DropdownMenu>
+                                    <div className="mt-2 flex flex-col gap-2 cursor-pointer">
+                                        <Button
+                                            type="button"
+                                            variant="outline"
+                                            className="cursor-pointer"
+                                            onClick={handlePreviewPost}
+                                        >
+                                            Preview Post
+                                        </Button>
+                                        <DropdownMenu>
+                                            <DropdownMenuTrigger
+                                                className="flex items-center justify-center bg-black text-white rounded-md text-sm p-2 font-semibold cursor-pointer">
+                                                Save Changes
+                                                {submitLoading && <LoaderCircleIcon className="animate-spin h-4 w-4 ml-2" />}
+                                            </DropdownMenuTrigger>
+                                            <DropdownMenuContent className="w-(--radix-dropdown-menu-trigger-width)">
+                                                {/* <DropdownMenuItem className="py-3">Preview article</DropdownMenuItem> */}
+                                                <DropdownMenuItem className="py-3"
+                                                    onClick={() => {
+                                                        form.setValue("status", "draft");
+                                                        form.handleSubmit(onSubmit)();
+                                                    }}>
+                                                    Save article as draft
+                                                </DropdownMenuItem>
+                                                <DropdownMenuItem className="font-semibold py-3"
+                                                    onClick={() => {
+                                                        form.setValue("status", "published");
+                                                        form.handleSubmit(onSubmit)();
+                                                    }}>
+                                                    Publish article
+                                                </DropdownMenuItem>
+                                            </DropdownMenuContent>
+                                        </DropdownMenu>
+                                    </div>
+
                                 </CardContent>
                             </Card>
                             {/* Featured Photo */}
