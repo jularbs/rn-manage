@@ -10,6 +10,7 @@ import {
   RadioTowerIcon,
   MicIcon,
   FileUser,
+  FileIcon,
 } from "lucide-react"
 import {
   Sidebar,
@@ -36,7 +37,7 @@ import Link from "next/link"
 import NavigationFooter from "./NavigationFooter"
 import { isAuthorized } from "@/lib/utils"
 import { useLocalStorage } from "usehooks-ts"
-import { ADMIN_ROLE, MANAGER_ROLE, MANAGING_EDITOR_ROLE } from "@/lib/constants"
+import { ABOUT_US_SLUG, ADMIN_ROLE, ADVERTISE_WITH_US_SLUG, MANAGER_ROLE, MANAGING_EDITOR_ROLE, PRIVACY_POLICY_SLUG, TERMS_OF_USE_SLUG } from "@/lib/constants"
 
 export function NavigationSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
@@ -131,43 +132,43 @@ export function NavigationSidebar({ ...props }: React.ComponentProps<typeof Side
         </SidebarGroup>
 
         {/* Content Management Group */}
-        {/* <SidebarGroup>
+        <SidebarGroup>
           <SidebarGroupLabel>Pages</SidebarGroupLabel>
           <SidebarMenu>
             <SidebarMenuItem>
-              <Link href="/dashboard/sales-management">
+              <Link href={`/dashboard/page-management/${ABOUT_US_SLUG}`}>
                 <SidebarMenuButton tooltip="About us Page">
-                  <File />
+                  <FileIcon />
                   <span>About us Page</span>
                 </SidebarMenuButton>
               </Link>
             </SidebarMenuItem>
             <SidebarMenuItem>
-              <Link href="/dashboard/sales-management">
-                <SidebarMenuButton tooltip="Contact us Page">
-                  <File />
-                  <span>Contact us Page</span>
-                </SidebarMenuButton>
-              </Link>
-            </SidebarMenuItem>
-            <SidebarMenuItem>
-              <Link href="/dashboard/sales-management">
+              <Link href={`/dashboard/page-management/${PRIVACY_POLICY_SLUG}`}>
                 <SidebarMenuButton tooltip="Privacy Policy">
-                  <File />
+                  <FileIcon />
                   <span>Privacy Policy</span>
                 </SidebarMenuButton>
               </Link>
             </SidebarMenuItem>
             <SidebarMenuItem>
-              <Link href="/dashboard/sales-management">
-                <SidebarMenuButton tooltip="Terms and Condition">
-                  <File />
-                  <span>Terms and Condition</span>
+              <Link href={`/dashboard/page-management/${TERMS_OF_USE_SLUG}`}>
+                <SidebarMenuButton tooltip="Terms of Use">
+                  <FileIcon />
+                  <span>Terms of Use</span>
+                </SidebarMenuButton>
+              </Link>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+              <Link href={`/dashboard/page-management/${ADVERTISE_WITH_US_SLUG}`}>
+                <SidebarMenuButton tooltip="Advertise with Us">
+                  <FileIcon />
+                  <span>Advertise with Us</span>
                 </SidebarMenuButton>
               </Link>
             </SidebarMenuItem>
           </SidebarMenu>
-        </SidebarGroup> */}
+        </SidebarGroup>
 
         {/* Site Management Group */}
         <SidebarGroup>
