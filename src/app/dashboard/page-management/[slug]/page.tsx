@@ -1,9 +1,9 @@
-import EditorComponent from "@/components/Forms/PostManagementForms/EditorComponent";
-export default function Page() {
+import PageEditorComponent from "@/components/Forms/PageManagementForms/PageEditorComponent";
+export default function Page({ params }: { params: { slug: string } }) {
     return (
         <div>
             <div className="flex flex-col flex-1 p-4 pt-0">
-                <EditorComponent />
+                <PageEditorComponent slug={params.slug} />
             </div>
         </div>
     )
