@@ -106,12 +106,12 @@ export const validateToken = async (token: string | undefined) => {
 
 export const requestResetPassword = async ({ email }: { email: string }) => {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/v2/auth/request-reset-password`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/v1/auth/request-password-reset`, {
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
       },
-      method: "PUT",
+      method: "POST",
       body: JSON.stringify({ email: email }),
     });
 
@@ -132,7 +132,7 @@ export const requestResetPassword = async ({ email }: { email: string }) => {
 
 export const resetPassword = async ({ data }: { data: Record<string, string> }) => {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/v2/auth/reset-password`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/v1/auth/reset-password`, {
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
