@@ -28,9 +28,12 @@ import {
 
 import { useLocalStorage } from "usehooks-ts";
 import { getInitials, unslugify } from "@/lib/utils";
+import { removeCookie } from "typescript-cookie";
+import { useRouter } from "next/navigation";
 const NavigationFooter = () => {
+    const router = useRouter();
     const { isMobile } = useSidebar()
-    const [value,] = useLocalStorage("user", { _id: "", fullName: "", email: "", role: ""})
+    const [value, , removeValue] = useLocalStorage("user", { _id: "", fullName: "", email: "", role: "" })
 
     return <SidebarFooter>
         <SidebarMenu>
@@ -77,12 +80,14 @@ const NavigationFooter = () => {
                             </Link>
                         </DropdownMenuGroup>
                         <DropdownMenuSeparator />
-                        <Link href="/dashboard/log-out">
-                            <DropdownMenuItem>
-                                <LogOut />
-                                Log out
-                            </DropdownMenuItem>
-                        </Link>
+                        <DropdownMenuItem onClick={() => {
+                            removeValue();
+                            removeCookie("token");
+                            router.push("/auth/login");
+                        }}>
+                            <LogOut />
+                            Log out
+                        </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
             </SidebarMenuItem>
