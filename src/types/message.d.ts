@@ -1,9 +1,10 @@
+import { IRecepient } from "./recepient";
 import { IStation } from "./station";
 import { IUser } from "./user";
 export interface IMessage {
   _id: Types.ObjectId;
   stationId: Types.ObjectId | Partial<IStation>;
-  reason: string;
+  reason: Types.ObjectId | Partial<IRecepient>;
   fullName: string;
   emailAddress: string;
   excerpt: string;

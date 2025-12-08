@@ -140,7 +140,7 @@ export default function ViewInquiryComponent() {
                 </div>
                 <div className="mb-3">
                     <Badge variant={"outline"}>{inquiryData.stationId?.name}</Badge>
-                    <p className="font-bold text-lg leading-loose">{inquiryData.reason}</p>
+                    <p className="font-bold text-lg leading-loose">{inquiryData.reason?.reason}</p>
                 </div>
                 <p className="whitespace-pre-wrap">{inquiryData.message}</p>
                 {inquiryData.status === "read" ?
