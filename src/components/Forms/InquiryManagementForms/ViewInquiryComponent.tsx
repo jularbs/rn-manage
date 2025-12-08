@@ -64,8 +64,18 @@ export default function ViewInquiryComponent() {
                 duration: 5000,
                 position: "top-center"
             })
+        }).catch(err => {
+            toast.error("Error marking inquiry as unread!", {
+                style: {
+                    background: "rgba(220, 46, 46, 1)",
+                    color: "white",
+                    border: "none"
+                },
+                description: err.message || "There was an error marking the inquiry as unread.",
+                duration: 5000,
+                position: "top-center"
+            })
         });
-
     }
 
     const handleMarkAsRead = () => {
@@ -86,8 +96,18 @@ export default function ViewInquiryComponent() {
                 duration: 5000,
                 position: "top-center"
             })
+        }).catch(err => {
+            toast.error("Error marking inquiry as read!", {
+                style: {
+                    background: "rgba(220, 46, 46, 1)",
+                    color: "white",
+                    border: "none"
+                },
+                description: err.message || "There was an error marking the inquiry as read.",
+                duration: 5000,
+                position: "top-center"
+            })
         });
-
     }
 
     return <>
