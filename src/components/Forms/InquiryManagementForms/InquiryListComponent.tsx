@@ -243,7 +243,7 @@ const InquiryListComponent = () => {
                 <CardContent className="p-0">
                     <form action={() => { setSearchQuery(searchInput) }}>
                         <div className="flex w-full p-2">
-                            <Input className="mr-1" placeholder="Search Articles..." onChange={(e) => setSearchInput(e.target.value)} />
+                            <Input className="mr-1" placeholder="Search Inquiries..." onChange={(e) => setSearchInput(e.target.value)} />
                             {/* <Button size="icon"
                                 type="button"
                                 className="mr-1 border-neutral-300 bg-neutral-300 text-neutral-900 hover:bg-neutral-100"
