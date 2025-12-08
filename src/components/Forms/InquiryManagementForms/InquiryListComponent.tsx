@@ -67,10 +67,10 @@ const InquiryListComponent = () => {
                         <Skeleton className="w-50 h-6" />
                     </TableCell>
                     <TableCell>
-                        <Skeleton className="w-50 h-6" />
+                        <Skeleton className="w-full h-6" />
                     </TableCell>
                     <TableCell>
-                        <Skeleton className="w-full h-6" />
+                        <Skeleton className="w-50 h-6" />
                     </TableCell>
                     <TableCell>
                         <Skeleton className="w-50 h-6" />
@@ -90,13 +90,13 @@ const InquiryListComponent = () => {
                     <TableCell>
                         {item.fullName}
                     </TableCell>
-                    <TableCell>
-                        {item.stationId.name}
-                    </TableCell>
                     <TableCell
                         className={"max-w-[600px] truncate"}
                     >
-                        {item.excerpt}
+                        <Link href={`/dashboard/inquiry-management/${item._id}`}>{item.excerpt}</Link>
+                    </TableCell>
+                    <TableCell>
+                        {item.stationId.name}
                     </TableCell>
                     <TableCell>
                         {item.createdAt && format(new Date(item.createdAt), "PPP p")}
@@ -277,8 +277,8 @@ const InquiryListComponent = () => {
                                     <TableBody>
                                         <TableRow>
                                             <TableHead>Name</TableHead>
-                                            <TableHead>Station</TableHead>
                                             <TableHead>Message</TableHead>
+                                            <TableHead>Station</TableHead>
                                             <TableHead>Date</TableHead>
                                             <TableHead className="text-right">Actions</TableHead>
                                         </TableRow>
