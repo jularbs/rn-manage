@@ -2,7 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { DAYS_DATA, TIMES_DATA } from "@/lib/constants";
-import { Program } from "@/types/programs";
+import { IProgram } from "@/types/program";
 import { LoaderCircle, PlusIcon } from "lucide-react";
 import { useState } from "react"
 import AddProgramComponent from "./AddProgramComponent";
@@ -61,21 +61,21 @@ const ProgramManagementComponent = () => {
         })
     }
 
-    const calculateLength = (program: Partial<Program>) => {
+    const calculateLength = (program: Partial<IProgram>) => {
         return (
             TIMES_DATA.map((item) => item.value).indexOf(program.endTime || "") -
             TIMES_DATA.map((item) => item.value).indexOf(program.startTime || "")
         );
     };
 
-    const calculateOffset = (program: Partial<Program>) => {
+    const calculateOffset = (program: Partial<IProgram>) => {
         return TIMES_DATA.map((item) => item.value).indexOf(program.startTime || "");
     };
 
     const showScheduledPrograms = (dayOfWeek: number) => {
         return programList?.data
-            .filter((item: Partial<Program>) => item.day?.includes(dayOfWeek))
-            .map((item: Partial<Program>, key: React.Key) => {
+            .filter((item: Partial<IProgram>) => item.day?.includes(dayOfWeek))
+            .map((item: Partial<IProgram>, key: React.Key) => {
                 return (
                     <button
                         style={{
