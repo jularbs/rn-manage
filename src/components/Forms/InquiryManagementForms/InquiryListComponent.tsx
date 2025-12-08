@@ -91,7 +91,7 @@ const InquiryListComponent = () => {
                         {item.fullName}
                     </TableCell>
                     <TableCell
-                        className={"max-w-[600px] truncate"}
+                        className={"max-w-[450px] truncate"}
                     >
                         <Link href={`/dashboard/inquiry-management/${item._id}`}>{item.excerpt}</Link>
                     </TableCell>
