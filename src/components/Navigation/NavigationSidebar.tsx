@@ -11,6 +11,8 @@ import {
   MicIcon,
   FileUser,
   FileIcon,
+  MessageSquareIcon,
+  LoaderIcon,
 } from "lucide-react"
 import {
   Sidebar,
@@ -38,10 +40,34 @@ import NavigationFooter from "./NavigationFooter"
 import { isAuthorized } from "@/lib/utils"
 import { useLocalStorage } from "usehooks-ts"
 import { ABOUT_US_SLUG, ADMIN_ROLE, ADVERTISE_WITH_US_SLUG, MANAGER_ROLE, MANAGING_EDITOR_ROLE, PRIVACY_POLICY_SLUG, TERMS_OF_USE_SLUG } from "@/lib/constants"
+import { Badge } from "../ui/badge"
+import useSWR from "swr"
+import { getCookie } from "typescript-cookie"
+import { fetcher } from "@/actions/swr"
+import { useEffect } from "react"
+import { toast } from "sonner"
 
 export function NavigationSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
   const [value,] = useLocalStorage("user", { _id: "", name: "", email: "", role: "" })
+  const { data, isLoading, error } = useSWR({ url: "v1/messages/unread/count", token: getCookie("token") }, fetcher)
+  const unreadCount = data?.data || 0;
+
+  useEffect(() => {
+    if (error) {
+      toast.error("Invalid Request!", {
+        style: {
+          background: "rgba(220, 46, 46, 1)",
+          color: "white",
+          border: "none"
+        },
+        description: error.message ||
+          "There was an error retrieving the unread messages count.",
+        duration: 5000,
+        position: "top-center"
+      })
+    }
+  }, [error])
 
 
   return (
@@ -72,6 +98,22 @@ export function NavigationSidebar({ ...props }: React.ComponentProps<typeof Side
                   <span>Official Website</span>
                 </SidebarMenuButton>
               </a>
+            </SidebarMenuItem>
+          </SidebarMenu>
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <Link href={"/dashboard/inquiry-management"}>
+                <SidebarMenuButton tooltip="Inquiries">
+                  <MessageSquareIcon />
+                  <span>Inquiries</span>
+                  {unreadCount > 0 &&
+                    <Badge variant="secondary" className="ml-auto">
+                      {error ? "!" : unreadCount > 99 ? "99+" : unreadCount}
+                    </Badge>
+                  }
+                  <LoaderIcon className={`ml-auto ${isLoading ? "animate-spin" : "hidden"}`} />
+                </SidebarMenuButton>
+              </Link>
             </SidebarMenuItem>
           </SidebarMenu>
         </SidebarGroup>
