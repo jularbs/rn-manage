@@ -225,6 +225,14 @@ export function NavigationSidebar({ ...props }: React.ComponentProps<typeof Side
               </Link>
             </SidebarMenuItem>
             <SidebarMenuItem>
+              <Link href="/dashboard/recepient-management">
+                <SidebarMenuButton tooltip="Recepient Management">
+                  <MessageSquareIcon />
+                  <span>Recepient Management</span>
+                </SidebarMenuButton>
+              </Link>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
               <Link href="/dashboard/jock-management">
                 <SidebarMenuButton tooltip="Jock Management">
                   <FileUser />
